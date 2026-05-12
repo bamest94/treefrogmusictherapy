@@ -696,6 +696,29 @@ function Services({ tweaks }) {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('therapy');
 
+  // Sync tab with URL hash so dropdown links to #music-lessons / #music-therapy switch the tab
+  React.useEffect(() => {
+    const syncFromHash = () => {
+      const h = window.location.hash;
+      let target = null;
+      if (h === '#music-lessons') { setActiveTab('lessons'); target = 'music-lessons'; }
+      else if (h === '#music-therapy') { setActiveTab('therapy'); target = 'music-therapy'; }
+      if (target) {
+        // Wait a tick for the tab content to render with the matching id, then scroll.
+        setTimeout(() => {
+          const el = document.getElementById(target);
+          if (el) {
+            const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+          }
+        }, 50);
+      }
+    };
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, []);
+
   const services = {
     therapy: {
       id: 'music-therapy',
@@ -1146,7 +1169,7 @@ function Footer({ tweaks }) {
           {/* Brand */}
           <div>
             <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:20 }}>
-              <img src="uploads/Treefrog_No_Pupils_Transparent.png" alt="Treefrog frog" style={{ height:72, width:'auto' }}/>
+              <img src="uploads/Treefrog Logo.png" alt="Treefrog frog" style={{ height:72, width:'auto' }}/>
               <img src="uploads/Treefrog Text.png" alt="Treefrog Music Therapy" style={{ height:56, width:'auto', filter:'brightness(10)' }}/>
             </div>
             <p style={{ fontSize:14, opacity:0.65, lineHeight:1.8, maxWidth:300, marginBottom:20 }}>
