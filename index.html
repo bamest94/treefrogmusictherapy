@@ -1241,8 +1241,8 @@ function Footer({ tweaks }) {
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12 }}>
           <p style={{ fontSize:13, opacity:0.4 }}>© 2025 Bradley Ames-Thomson & Treefrog Music Therapy</p>
           <div style={{ display:'flex', gap:20 }}>
-            {['Privacy Policy','Accessibility Statement'].map(l => (
-              <a key={l} href="#" style={{ fontSize:13, opacity:0.4, color:C.white, textDecoration:'none', transition:'opacity 0.15s' }}
+            {[['Privacy Policy','Privacy Policy.html'],['Accessibility Statement','Accessibility Statement.html']].map(([l,h]) => (
+              <a key={l} href={h} style={{ fontSize:13, opacity:0.4, color:C.white, textDecoration:'none', transition:'opacity 0.15s' }}
               onMouseEnter={e=>e.currentTarget.style.opacity='0.8'} onMouseLeave={e=>e.currentTarget.style.opacity='0.4'}>
                 {l}
               </a>
