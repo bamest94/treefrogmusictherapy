@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Music Therapy AAC - Augmentative and Alternative Communication app for music therapy">
+    <meta name="theme-color" content="#6366f1">
+    <title>Music Therapy AAC</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #f0f4ff 0%, #f5f3ff 100%);
+        }
+
+        .widget-button {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 180px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .widget-button:active {
+            transform: scale(0.95);
+        }
+
+        .widget-button:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .symbol-icon {
+            width: 6.5rem;
+            height: 6.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .symbol-icon svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .label {
+            font-size: 0.85rem;
+            text-align: center;
+            line-height: 1.15;
+            font-weight: 800;
+            word-wrap: break-word;
+            max-width: 100%;
+            letter-spacing: -0.01em;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .sentence-display {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.25);
+        }
+
+        .sentence-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .sentence-text {
+            font-size: 1.75rem;
+            font-weight: 800;
+            word-wrap: break-word;
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        .category-header {
+            padding: 1.25rem 1.5rem;
+            border-radius: 14px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .category-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Category Colors - Widgit-inspired pastels */
+        .category-instruments {
+            background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%);
+            color: #3730a3;
+        }
+
+        .category-modifiers {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            color: #831843;
+        }
+
+        .category-preferences {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+        }
+
+        .category-needs {
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            color: #92400e;
+        }
+
+        .category-emotions {
+            background: linear-gradient(135deg, #f0e7fe 0%, #e9d5ff 100%);
+            color: #5b21b6;
+        }
+
+        .category-control {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #0c2d6b;
+        }
+
+        .category-rhymes {
+            background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
+            color: #4c1d95;
+        }
+
+        /* Button colors matching categories */
+        .btn-instruments {
+            background-color: #eef2ff;
+            color: #3730a3;
+            border-color: #c7d2fe;
+        }
+
+        .btn-instruments:hover {
+            background-color: #e0e7ff;
+            border-color: #a5b4fc;
+        }
+
+        .btn-modifiers {
+            background-color: #fdf2f8;
+            color: #831843;
+            border-color: #fbcfe8;
+        }
+
+        .btn-modifiers:hover {
+            background-color: #fce7f3;
+            border-color: #f472b6;
+        }
+
+        .btn-preferences {
+            background-color: #f0fdf4;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+
+        .btn-preferences:hover {
+            background-color: #dcfce7;
+            border-color: #6ee7b7;
+        }
+
+        .btn-needs {
+            background-color: #fffbeb;
+            color: #92400e;
+            border-color: #fdba74;
+        }
+
+        .btn-needs:hover {
+            background-color: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .btn-emotions {
+            background-color: #faf5ff;
+            color: #5b21b6;
+            border-color: #e9d5ff;
+        }
+
+        .btn-emotions:hover {
+            background-color: #f3e8ff;
+            border-color: #d8b4fe;
+        }
+
+        .btn-control {
+            background-color: #f0f9ff;
+            color: #0c2d6b;
+            border-color: #bfdbfe;
+        }
+
+        .btn-control:hover {
+            background-color: #e0f2fe;
+            border-color: #7dd3fc;
+        }
+
+        .btn-rhymes {
+            background-color: #faf5ff;
+            color: #4c1d95;
+            border-color: #d8b4fe;
+        }
+
+        .btn-rhymes:hover {
+            background-color: #f3e8ff;
+            border-color: #c084fc;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        #speakBtn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        #clearBtn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        #stopBtn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header-title {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-btn {
+            padding: 0.625rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            color: #4b5563;
+        }
+
+        .profile-btn:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+
+        .profile-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        #header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        #settingsBtn {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 10px;
+            background: #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.25rem;
+        }
+
+        #settingsBtn:hover {
+            background: #e5e7eb;
+            transform: rotate(20deg);
+        }
+
+        /* ===== Add Word feature ===== */
+        .widget-button { position: relative; }
+
+        .add-tile {
+            background: transparent !important;
+            border-style: dashed !important;
+            border-width: 2.5px !important;
+            box-shadow: none !important;
+            opacity: 0.65;
+        }
+        .add-tile:hover {
+            opacity: 1;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .custom-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            font-size: 16px;
+            font-weight: 900;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+            z-index: 2;
+        }
+        .widget-button:hover .custom-delete,
+        .widget-button.custom-word:focus-within .custom-delete {
+            opacity: 1;
+        }
+        .custom-delete:hover { transform: scale(1.15); }
+
+        .emoji-icon {
+            font-size: 4.5rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .add-dialog {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
+        }
+        .add-dialog.hidden { display: none !important; }
+        .add-dialog-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.75rem;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .add-dialog-card h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0 0 0.25rem 0;
+            color: #1f2937;
+        }
+        .add-dialog-card .add-dialog-sub {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 1.25rem;
+            font-weight: 600;
+        }
+        .add-dialog-card label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 0.4rem;
+            margin-top: 0.9rem;
+        }
+        .add-dialog-card input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.15s ease;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .add-dialog-card input:focus {
+            border-color: #6366f1;
+        }
+        .add-dialog-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+        .add-dialog-actions button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.15s ease;
+        }
+        #addCancel {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+        #addCancel:hover { background: #e5e7eb; }
+        #addSave {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        #addSave:hover { transform: translateY(-1px); }
+        #addSave:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== Custom sections ===== */
+        .section-custom .category-header {
+            background: linear-gradient(135deg, var(--cat-bg-light, #e5e7eb) 0%, var(--cat-bg, #c7d2fe) 100%);
+            color: var(--cat-ink, #1a1a1a);
+        }
+        .section-custom .widget-button:not(.add-tile) {
+            background-color: var(--tile-bg, #fff);
+            color: var(--cat-ink, #1a1a1a);
+            border-color: var(--tile-border, #e5e7eb);
+        }
+        .section-custom .widget-button:not(.add-tile):hover {
+            background-color: var(--tile-hover-bg, #f3f4f6);
+            border-color: var(--tile-hover-border, #9ca3af);
+        }
+        .section-custom .add-tile {
+            color: var(--cat-ink, #1a1a1a);
+        }
+        .section-custom .category-header {
+            position: relative;
+            padding-right: 3.5rem;
+        }
+        .section-delete {
+            position: absolute;
+            top: 50%;
+            right: 1.25rem;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            color: currentColor;
+            font-size: 18px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        .section-delete:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Add Section button (full-width, below all sections) */
+        .add-section-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1.5rem 1.5rem;
+            border-radius: 16px;
+            border: 2.5px dashed #c7d2fe;
+            background: rgba(255, 255, 255, 0.5);
+            color: #4f46e5;
+            font-weight: 800;
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 2rem;
+        }
+        .add-section-btn:hover {
+            background: white;
+            border-color: #6366f1;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15);
+        }
+        .add-section-btn svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Palette swatches in dialog */
+        .palette-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .palette-swatch {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        .palette-swatch:hover {
+            transform: scale(1.05);
+        }
+        .palette-swatch.selected {
+            border-color: #1f2937;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen font-sans">
+        <!-- Header -->
+        <header id="header" class="sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                        🎵
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold header-title">Music Therapy AAC</h1>
+                        <p class="text-xs md:text-sm text-gray-500 font-semibold">Sentence Builder</p>
+                    </div>
+                </div>
+                <button
+                    id="settingsBtn"
+                    title="Settings"
+                >
+                    ⚙️
+                </button>
+            </div>
+
+            <!-- Settings Panel -->
+            <div id="settingsPanel" class="hidden bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 px-6 py-4">
+                <div class="max-w-7xl mx-auto">
+                    <label class="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">
+                        User Profile:
+                    </label>
+                    <div class="flex gap-3 flex-wrap">
+                        <button class="profile-btn" data-profile="small">📱 Small</button>
+                        <button class="profile-btn" data-profile="medium">📲 Medium</button>
+                        <button class="profile-btn" data-profile="large">🖥️ Large</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Sentence Display -->
+            <div class="sentence-display mb-12">
+                <div class="sentence-label">Currently Building:</div>
+                <div id="sentenceDisplay" class="sentence-text">
+                    Tap buttons to build a sentence
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <button
+                    id="speakBtn"
+                    class="action-btn"
+                >
+                    🎤 Speak
+                </button>
+                <button
+                    id="clearBtn"
+                    class="action-btn"
+                >
+                    🔄 Clear
+                </button>
+                <button
+                    id="stopBtn"
+                    class="action-btn"
+                >
+                    ⏹️ Stop
+                </button>
+            </div>
+
+            <!-- Preferences & Wants Section -->
+            <section class="section">
+                <div class="category-header category-preferences">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 40 40" class="w-full h-full">
+                            <path d="M 20 7 L 25 18 L 37 18 L 28 25 L 33 36 L 20 29 L 7 36 L 12 25 L 3 18 L 15 18 Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <span>Preferences & Wants</span>
+                </div>
+                <div id="preferencesGrid" class="grid gap-4">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Instruments Section -->
+            <section class="section">
+                <div class="category-header category-instruments">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 40 40" class="w-full h-full">
+                            <rect x="5" y="15" width="4" height="20" fill="currentColor" rx="1"/>
+                            <rect x="12" y="10" width="4" height="25" fill="currentColor" rx="1"/>
+                            <rect x="19" y="8" width="4" height="27" fill="currentColor" rx="1"/>
+                            <rect x="26" y="12" width="4" height="23" fill="currentColor" rx="1"/>
+                            <rect x="33" y="18" width="4" height="17" fill="currentColor" rx="1"/>
+                        </svg>
+                    </div>
+                    <span>Instruments</span>
+                </div>
+                <div id="instrumentsGrid" class="grid gap-4">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Nursery Rhymes & Songs Section -->
+            <section class="section">
+                <div class="category-header category-rhymes">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 40 40" class="w-full h-full">
+                            <path d="M 12 8 Q 10 12 12 16 Q 14 12 12 8" fill="currentColor"/>
+                            <path d="M 20 6 Q 18 12 20 18 Q 22 12 20 6" fill="currentColor"/>
+                            <path d="M 28 8 Q 26 12 28 16 Q 30 12 28 8" fill="currentColor"/>
+                            <path d="M 16 20 Q 14 24 16 28 Q 18 24 16 20" fill="currentColor"/>
+                            <path d="M 24 20 Q 22 24 24 28 Q 26 24 24 20" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <span>Songs & Rhymes</span>
+                </div>
+                <div id="rhymesGrid" class="grid gap-4">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Volume & Actions Section -->
+            <section class="section">
+                <div class="category-header category-modifiers">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 40 40" class="w-full h-full">
+                            <path d="M 20 5 L 35 30 L 5 30 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span>Volume & Actions</span>
+                </div>
+                <div id="modifiersGrid" class="grid gap-4">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Needs Section -->
+            <section class="section">
+                <div class="category-header category-needs">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 40 40" class="w-full h-full">
+                            <circle cx="20" cy="12" r="6" fill="currentColor"/>
+                            <path d="M 10 22 Q 10 18 20 18 Q 30 18 30 22 L 30 32 Q 30 35 27 35 L 13 35 Q 10 35 10 32 Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <span>Needs</span>
+                </div>
+                <div id="needsGrid" class="grid gap-4">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Emotions & Feelings Section -->
+            <section class="section">
+                <div class="category-header category-emotions">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 40 40" class="w-full h-full">
+                            <circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="15" cy="16" r="2" fill="currentColor"/>
+                            <circle cx="25" cy="16" r="2" fill="currentColor"/>
+                            <path d="M 15 24 Q 20 27 25 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <span>Emotions & Feelings</span>
+                </div>
+                <div id="emotionsGrid" class="grid gap-4">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Control Section -->
+            <section class="section">
+                <div class="category-header category-control">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 40 40" class="w-full h-full">
+                            <rect x="8" y="10" width="5" height="20" fill="currentColor" rx="2"/>
+                            <path d="M 18 10 L 28 20 L 18 30 Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <span>Control</span>
+                </div>
+                <div id="controlGrid" class="grid gap-4">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Custom sections injected here -->
+            <div id="customSections"></div>
+
+            <!-- Add Section button -->
+            <button id="addSectionBtn" class="add-section-btn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M 12 5 L 12 19 M 5 12 L 19 12"/>
+                </svg>
+                Add Section
+            </button>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 text-center py-8 text-gray-500 text-sm border-t border-gray-200 px-4">
+            <p class="font-semibold">Music Therapy AAC - Sentence Builder</p>
+            <p class="mt-2 text-gray-400">Tap buttons to build a sentence, then press Speak</p>
+        </footer>
+    </div>
+
+    <!-- Add Word Dialog -->
+    <div id="addDialog" class="add-dialog hidden">
+        <div class="add-dialog-card">
+            <h3>Add a Word</h3>
+            <div class="add-dialog-sub">to <span id="addDialogCategory">…</span></div>
+            <label for="addWordInput">Word or phrase</label>
+            <input id="addWordInput" type="text" placeholder="e.g. Tambourine" maxlength="40" autocomplete="off"/>
+            <label for="addEmojiInput">Icon (optional emoji)</label>
+            <input id="addEmojiInput" type="text" placeholder="🎺" maxlength="4" autocomplete="off"/>
+            <div class="add-dialog-actions">
+                <button id="addCancel" type="button">Cancel</button>
+                <button id="addSave" type="button">Save Word</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Section Dialog -->
+    <div id="sectionDialog" class="add-dialog hidden">
+        <div class="add-dialog-card">
+            <h3>Add a Section</h3>
+            <div class="add-dialog-sub">Create your own category</div>
+            <label for="sectionNameInput">Section name</label>
+            <input id="sectionNameInput" type="text" placeholder="e.g. Body Parts" maxlength="30" autocomplete="off"/>
+            <label>Color</label>
+            <div id="paletteRow" class="palette-row"></div>
+            <div class="add-dialog-actions">
+                <button id="sectionCancel" type="button">Cancel</button>
+                <button id="sectionSave" type="button">Create Section</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SVG Symbol Generator - Widgit-inspired bold-outlined illustrations
+        // Shared stroke style: #1a1a1a, width ~3, round joins/caps
+        const STROKE = 'stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+        const THIN = 'stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"';
+
+        const symbolMap = {
+            // ===== Instruments =====
+            'Piano': `<svg viewBox="0 0 64 64"><rect x="4" y="14" width="56" height="10" rx="2" fill="#7c2d12" ${STROKE}/><rect x="4" y="22" width="56" height="4" fill="#1a1a1a"/><rect x="4" y="26" width="56" height="28" rx="2" fill="#fff" ${STROKE}/><g fill="#1a1a1a"><rect x="10" y="26" width="5" height="16"/><rect x="17" y="26" width="5" height="16"/><rect x="30" y="26" width="5" height="16"/><rect x="37" y="26" width="5" height="16"/><rect x="44" y="26" width="5" height="16"/></g><g stroke="#1a1a1a" stroke-width="1.6"><line x1="12.5" y1="42" x2="12.5" y2="54"/><line x1="19.5" y1="42" x2="19.5" y2="54"/><line x1="27" y1="26" x2="27" y2="54"/><line x1="32.5" y1="42" x2="32.5" y2="54"/><line x1="39.5" y1="42" x2="39.5" y2="54"/><line x1="46.5" y1="42" x2="46.5" y2="54"/><line x1="53" y1="26" x2="53" y2="54"/></g></svg>`,
+            'Guitar': `<svg viewBox="0 0 64 64"><rect x="26" y="4" width="12" height="7" rx="1" fill="#fcd34d" ${STROKE}/><circle cx="30" cy="7" r="1" fill="#1a1a1a"/><circle cx="34" cy="7" r="1" fill="#1a1a1a"/><rect x="27" y="11" width="10" height="20" fill="#92400e" ${STROKE}/><g stroke="#1a1a1a" stroke-width="1"><line x1="27" y1="17" x2="37" y2="17"/><line x1="27" y1="23" x2="37" y2="23"/><line x1="27" y1="29" x2="37" y2="29"/></g><path d="M 32 31 C 24 31 18 33 18 38 C 18 42 22 44 22 47 C 22 50 12 52 12 56 C 12 60 22 63 32 63 C 42 63 52 60 52 56 C 52 52 42 50 42 47 C 42 44 46 42 46 38 C 46 33 40 31 32 31 Z" fill="#fbbf24" ${STROKE}/><circle cx="32" cy="52" r="5" fill="#1a1a1a"/><rect x="25" y="59" width="14" height="2.5" rx="0.5" fill="#1a1a1a"/><g stroke="#1a1a1a" stroke-width="0.7" opacity="0.5"><line x1="30" y1="31" x2="30" y2="59"/><line x1="32" y1="31" x2="32" y2="59"/><line x1="34" y1="31" x2="34" y2="59"/></g></svg>`,
+            'Drums': `<svg viewBox="0 0 64 64"><line x1="10" y1="18" x2="22" y2="36" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/><line x1="54" y1="18" x2="42" y2="36" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="10" cy="16" rx="7" ry="2.2" fill="#fcd34d" ${STROKE}/><ellipse cx="54" cy="16" rx="7" ry="2.2" fill="#fcd34d" ${STROKE}/><rect x="13" y="24" width="16" height="16" rx="1" fill="#3b82f6" ${STROKE}/><ellipse cx="21" cy="24" rx="8" ry="2.5" fill="#fff" ${THIN}/><rect x="35" y="24" width="16" height="16" rx="1" fill="#3b82f6" ${STROKE}/><ellipse cx="43" cy="24" rx="8" ry="2.5" fill="#fff" ${THIN}/><circle cx="32" cy="46" r="13" fill="#fff" ${STROKE}/><circle cx="32" cy="46" r="5" fill="#fef3c7" ${THIN}/><line x1="15" y1="40" x2="10" y2="58" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/><line x1="49" y1="40" x2="54" y2="58" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+            'Xylophone': `<svg viewBox="0 0 64 64"><g ${STROKE}><rect x="4" y="18" width="10" height="24" fill="#ef4444" rx="2"/><rect x="15" y="20" width="10" height="22" fill="#f97316" rx="2"/><rect x="26" y="22" width="10" height="20" fill="#facc15" rx="2"/><rect x="37" y="24" width="10" height="18" fill="#22c55e" rx="2"/><rect x="48" y="26" width="10" height="16" fill="#3b82f6" rx="2"/></g><line x1="14" y1="54" x2="34" y2="46" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/><circle cx="13" cy="54" r="3" fill="#1a1a1a"/><line x1="26" y1="58" x2="46" y2="50" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/><circle cx="25" cy="58" r="3" fill="#1a1a1a"/></svg>`,
+            'Bells': `<svg viewBox="0 0 64 64"><g ${STROKE}><!-- red bell top-left --><circle cx="18" cy="9" r="2" fill="#ef4444"/><path d="M 18 11 L 18 14"/><path d="M 8 26 Q 8 14 18 12 Q 28 14 28 26 Z" fill="#ef4444"/><ellipse cx="18" cy="27" rx="11" ry="1.8" fill="#ef4444"/><circle cx="18" cy="30.5" r="2.4" fill="#fecaca"/><!-- yellow bell top-right --><circle cx="46" cy="9" r="2" fill="#facc15"/><path d="M 46 11 L 46 14"/><path d="M 36 26 Q 36 14 46 12 Q 56 14 56 26 Z" fill="#facc15"/><ellipse cx="46" cy="27" rx="11" ry="1.8" fill="#facc15"/><circle cx="46" cy="30.5" r="2.4" fill="#fef9c3"/><!-- green bell bottom-left --><circle cx="18" cy="36" r="2" fill="#22c55e"/><path d="M 18 38 L 18 41"/><path d="M 8 53 Q 8 41 18 39 Q 28 41 28 53 Z" fill="#22c55e"/><ellipse cx="18" cy="54" rx="11" ry="1.8" fill="#22c55e"/><circle cx="18" cy="57.5" r="2.4" fill="#bbf7d0"/><!-- blue bell bottom-right --><circle cx="46" cy="36" r="2" fill="#3b82f6"/><path d="M 46 38 L 46 41"/><path d="M 36 53 Q 36 41 46 39 Q 56 41 56 53 Z" fill="#3b82f6"/><ellipse cx="46" cy="54" rx="11" ry="1.8" fill="#3b82f6"/><circle cx="46" cy="57.5" r="2.4" fill="#bfdbfe"/></g></svg>`,
+            'Ukulele': `<svg viewBox="0 0 64 64"><rect x="26" y="6" width="12" height="6" rx="1" fill="#fcd34d" ${STROKE}/><circle cx="30" cy="9" r="1" fill="#1a1a1a"/><circle cx="34" cy="9" r="1" fill="#1a1a1a"/><rect x="27" y="12" width="10" height="20" fill="#92400e" ${STROKE}/><g stroke="#1a1a1a" stroke-width="1"><line x1="27" y1="18" x2="37" y2="18"/><line x1="27" y1="24" x2="37" y2="24"/><line x1="27" y1="30" x2="37" y2="30"/></g><path d="M 32 32 C 26 32 22 35 22 40 C 22 43 25 45 25 47 C 25 49 17 51 17 54 C 17 58 24 61 32 61 C 40 61 47 58 47 54 C 47 51 39 49 39 47 C 39 45 42 43 42 40 C 42 35 38 32 32 32 Z" fill="#b45309" ${STROKE}/><circle cx="32" cy="51" r="5" fill="#1a1a1a"/><rect x="25" y="57" width="14" height="2.5" rx="0.5" fill="#1a1a1a"/><g stroke="#1a1a1a" stroke-width="0.7" opacity="0.5"><line x1="30" y1="32" x2="30" y2="57"/><line x1="32" y1="32" x2="32" y2="57"/><line x1="34" y1="32" x2="34" y2="57"/></g></svg>`,
+            'Djembe': `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="12" rx="16" ry="4.5" fill="#fef3c7" ${STROKE}/><path d="M 16 12 L 22 38 Q 22 40 24 40 L 24 56 Q 28 58 32 58 Q 36 58 40 56 L 40 40 Q 42 40 42 38 L 48 12" fill="#b45309" ${STROKE}/><ellipse cx="32" cy="12" rx="16" ry="4.5" fill="none" ${STROKE}/><g stroke="#1a1a1a" stroke-width="2" fill="none"><path d="M 19 14 L 26 36 L 32 14"/><path d="M 32 14 L 38 36 L 45 14"/></g><path d="M 24 40 Q 32 42 40 40" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/><path d="M 26 54 L 26 58 M 38 54 L 38 58" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/></svg>`,
+            'Ocean Drum': `<svg viewBox="0 0 64 64"><circle cx="32" cy="30" r="24" fill="#dbeafe" ${STROKE}/><path d="M 8 36 Q 8 56 32 56 Q 56 56 56 36 L 56 30 Q 56 50 32 50 Q 8 50 8 30 Z" fill="#fbbf24" ${STROKE}/><path d="M 11 28 Q 18 22 25 28 Q 32 34 39 28 Q 46 22 53 28" fill="none" stroke="#1d4ed8" stroke-width="2.8" stroke-linecap="round"/><path d="M 11 36 Q 18 30 25 36 Q 32 42 39 36 Q 46 30 53 36" fill="none" stroke="#1d4ed8" stroke-width="2.8" stroke-linecap="round"/><circle cx="18" cy="20" r="1.8" fill="#1a1a1a"/><circle cx="32" cy="16" r="1.8" fill="#1a1a1a"/><circle cx="46" cy="20" r="1.8" fill="#1a1a1a"/></svg>`,
+            'Gathering Drum': `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="26" rx="24" ry="8" fill="#fef3c7" ${STROKE}/><path d="M 8 26 L 8 36 Q 8 48 32 48 Q 56 48 56 36 L 56 26" fill="#fef3c7" ${STROKE}/><path d="M 10 40 Q 18 44 32 44 Q 46 44 54 40 L 54 34 Q 46 38 32 38 Q 18 38 10 34 Z" fill="#b45309" ${STROKE}/><line x1="48" y1="10" x2="34" y2="24" stroke="#a16207" stroke-width="3.5" stroke-linecap="round"/><line x1="48" y1="10" x2="34" y2="24" stroke="#1a1a1a" stroke-width="4.5" stroke-linecap="round" opacity="0"/><circle cx="50" cy="8" r="4.5" fill="#1a1a1a"/></svg>`,
+            'Boomwhackers': `<svg viewBox="0 0 64 64"><g ${STROKE}><rect x="3" y="4" width="8" height="56" rx="3" fill="#ef4444"/><rect x="13" y="8" width="8" height="52" rx="3" fill="#f97316"/><rect x="23" y="12" width="8" height="48" rx="3" fill="#facc15"/><rect x="33" y="16" width="8" height="44" rx="3" fill="#22c55e"/><rect x="43" y="20" width="8" height="40" rx="3" fill="#3b82f6"/><rect x="53" y="24" width="8" height="36" rx="3" fill="#a855f7"/></g></svg>`,
+            'Chimes': `<svg viewBox="0 0 64 64"><rect x="8" y="10" width="48" height="5" rx="1.5" fill="#92400e" ${STROKE}/><g ${STROKE}><rect x="12" y="15" width="6" height="28" rx="2" fill="#cbd5e1"/><rect x="21" y="15" width="6" height="34" rx="2" fill="#cbd5e1"/><rect x="30" y="15" width="6" height="40" rx="2" fill="#cbd5e1"/><rect x="39" y="15" width="6" height="34" rx="2" fill="#cbd5e1"/><rect x="48" y="15" width="6" height="28" rx="2" fill="#cbd5e1"/></g><g stroke="#1a1a1a" stroke-width="1" opacity="0.4"><line x1="15" y1="20" x2="15" y2="40"/><line x1="24" y1="20" x2="24" y2="46"/><line x1="33" y1="20" x2="33" y2="52"/><line x1="42" y1="20" x2="42" y2="46"/><line x1="51" y1="20" x2="51" y2="40"/></g></svg>`,
+            'Percussion': `<svg viewBox="0 0 64 64"><!-- shaker --><ellipse cx="18" cy="36" rx="10" ry="14" fill="#a78bfa" ${STROKE}/><g fill="#1a1a1a"><circle cx="14" cy="30" r="1.5"/><circle cx="21" cy="34" r="1.5"/><circle cx="17" cy="40" r="1.5"/><circle cx="22" cy="44" r="1.5"/></g><!-- handbell --><rect x="42" y="8" width="4" height="14" rx="1" fill="#92400e" ${STROKE}/><path d="M 32 46 Q 32 28 44 22 Q 56 28 56 46 Z" fill="#fbbf24" ${STROKE}/><ellipse cx="44" cy="46" rx="12" ry="2.5" fill="#fbbf24" ${STROKE}/><circle cx="44" cy="51" r="2.6" fill="#fef3c7" ${THIN}/></svg>`,
+            'Microphone': `<svg viewBox="0 0 64 64"><rect x="22" y="6" width="20" height="30" rx="10" fill="#374151" ${STROKE}/><g stroke="#1a1a1a" stroke-width="1.5" opacity="0.8"><line x1="23" y1="14" x2="41" y2="14"/><line x1="23" y1="22" x2="41" y2="22"/><line x1="23" y1="30" x2="41" y2="30"/></g><rect x="19" y="36" width="26" height="5" rx="1" fill="#1f2937" ${STROKE}/><rect x="28" y="41" width="8" height="14" fill="#9ca3af" ${STROKE}/><ellipse cx="32" cy="57" rx="15" ry="3.5" fill="#374151" ${STROKE}/></svg>`,
+
+            // ===== Modifiers =====
+            'Play': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#22c55e" ${STROKE}/><polygon points="25,18 25,46 47,32" fill="#fff" ${STROKE}/></svg>`,
+            'Pause': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#f59e0b" ${STROKE}/><rect x="22" y="19" width="7" height="26" rx="1.5" fill="#fff" ${STROKE}/><rect x="35" y="19" width="7" height="26" rx="1.5" fill="#fff" ${STROKE}/></svg>`,
+            'Quiet': `<svg viewBox="0 0 64 64"><path d="M 6 26 L 6 38 L 18 38 L 30 48 L 30 16 L 18 26 Z" fill="#a78bfa" ${STROKE}/><path d="M 38 28 Q 44 32 38 36" fill="none" ${STROKE}/></svg>`,
+            'Loud': `<svg viewBox="0 0 64 64"><path d="M 4 26 L 4 38 L 16 38 L 28 48 L 28 16 L 16 26 Z" fill="#ef4444" ${STROKE}/><path d="M 36 24 Q 42 32 36 40" fill="none" ${STROKE}/><path d="M 44 18 Q 54 32 44 46" fill="none" ${STROKE}/></svg>`,
+            'Start': `<svg viewBox="0 0 64 64"><line x1="14" y1="8" x2="14" y2="58" ${STROKE} stroke-width="4"/><path d="M 16 10 L 52 10 L 44 22 L 52 34 L 16 34 Z" fill="#22c55e" ${STROKE}/><circle cx="14" cy="58" r="3" fill="#1a1a1a"/></svg>`,
+            'Go': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#22c55e" ${STROKE}/><path d="M 20 32 L 42 32" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M 34 22 L 44 32 L 34 42" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+            'Go Slower': `<svg viewBox="0 0 64 64"><ellipse cx="30" cy="40" rx="20" ry="13" fill="#84cc16" ${STROKE}/><path d="M 18 36 L 22 44 M 28 32 L 28 48 M 38 36 L 34 44" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="50" cy="34" r="8" fill="#a3e635" ${STROKE}/><circle cx="52" cy="32" r="2" fill="#1a1a1a"/><circle cx="48" cy="36" r="1.5" fill="#1a1a1a" opacity="0.5"/><ellipse cx="18" cy="54" rx="4" ry="3" fill="#a3e635" ${STROKE}/><ellipse cx="42" cy="54" rx="4" ry="3" fill="#a3e635" ${STROKE}/></svg>`,
+            'Go Faster': `<svg viewBox="0 0 64 64"><!-- ears --><path d="M 16 26 L 14 8 L 22 22 Z" fill="#fcd34d" ${STROKE}/><path d="M 28 22 L 28 6 L 34 22 Z" fill="#fcd34d" ${STROKE}/><path d="M 18 24 L 17 12 L 21 22 Z" fill="#fef3c7" ${THIN}/><path d="M 30 22 L 30 10 L 33 22 Z" fill="#fef3c7" ${THIN}/><!-- body --><ellipse cx="34" cy="42" rx="20" ry="13" fill="#fbbf24" ${STROKE}/><!-- head --><circle cx="22" cy="32" r="11" fill="#fbbf24" ${STROKE}/><!-- eye --><circle cx="20" cy="31" r="2" fill="#1a1a1a"/><circle cx="20.5" cy="30.5" r="0.7" fill="#fff"/><!-- nose --><circle cx="13" cy="33" r="1.6" fill="#ec4899"/><!-- mouth --><path d="M 14 34 Q 16 36 18 34" fill="none" ${THIN}/><!-- whiskers --><path d="M 6 31 L 12 32 M 6 35 L 12 34" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/><!-- tail --><circle cx="52" cy="38" r="4" fill="#fef3c7" ${THIN}/><!-- legs --><ellipse cx="28" cy="54" rx="4" ry="2.5" fill="#fbbf24" ${THIN}/><ellipse cx="42" cy="54" rx="4" ry="2.5" fill="#fbbf24" ${THIN}/></svg>`,
+
+            // ===== Preferences =====
+            'I like': `<svg viewBox="0 0 64 64"><path d="M 12 30 L 22 30 L 22 56 L 12 56 Z" fill="#86efac" ${STROKE}/><path d="M 22 30 L 30 12 Q 32 6 38 8 Q 42 10 40 18 L 38 26 L 52 26 Q 58 26 56 32 L 52 50 Q 50 56 44 56 L 22 56 Z" fill="#22c55e" ${STROKE}/></svg>`,
+            "I don't like": `<svg viewBox="0 0 64 64"><path d="M 12 8 L 22 8 L 22 34 L 12 34 Z" fill="#fda4af" ${STROKE}/><path d="M 22 34 L 30 52 Q 32 58 38 56 Q 42 54 40 46 L 38 38 L 52 38 Q 58 38 56 32 L 52 14 Q 50 8 44 8 L 22 8 Z" fill="#fb7185" ${STROKE}/></svg>`,
+            'I want': `<svg viewBox="0 0 64 64"><polygon points="32,4 40,22 60,24 45,38 50,58 32,48 14,58 19,38 4,24 24,22" fill="#fcd34d" ${STROKE}/></svg>`,
+            'I want more': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#f472b6" ${STROKE}/><path d="M 32 18 L 32 46 M 18 32 L 46 32" stroke="#fff" stroke-width="7" stroke-linecap="round"/></svg>`,
+            'I want less': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#f472b6" ${STROKE}/><line x1="18" y1="32" x2="46" y2="32" stroke="#fff" stroke-width="7" stroke-linecap="round"/></svg>`,
+
+            // ===== Needs =====
+            'I need the toilet': `<svg viewBox="0 0 64 64"><rect x="18" y="6" width="22" height="14" rx="2" fill="#bfdbfe" ${STROKE}/><path d="M 12 20 L 46 20 L 42 34 Q 42 38 36 38 L 22 38 Q 16 38 16 34 Z" fill="#fff" ${STROKE}/><ellipse cx="29" cy="34" rx="11" ry="3" fill="#bfdbfe" ${STROKE}/><rect x="18" y="40" width="22" height="16" rx="2" fill="#dbeafe" ${STROKE}/><path d="M 46 26 L 54 26 L 54 38" fill="none" ${STROKE}/></svg>`,
+            'I need water': `<svg viewBox="0 0 64 64"><path d="M 16 10 L 48 10 L 44 56 Q 44 58 42 58 L 22 58 Q 20 58 20 56 Z" fill="#dbeafe" ${STROKE}/><path d="M 21 26 Q 32 22 43 26 L 42 55 Q 42 56 41 56 L 23 56 Q 22 56 22 55 Z" fill="#60a5fa" ${THIN}/><ellipse cx="28" cy="20" rx="3" ry="1.5" fill="#fff" opacity="0.8"/></svg>`,
+            'I need a break': `<svg viewBox="0 0 64 64"><path d="M 22 14 Q 20 10 22 6" fill="none" ${THIN}/><path d="M 32 14 Q 30 10 32 6" fill="none" ${THIN}/><path d="M 42 14 Q 40 10 42 6" fill="none" ${THIN}/><path d="M 12 22 L 46 22 L 44 50 Q 44 56 38 56 L 20 56 Q 14 56 14 50 Z" fill="#fed7aa" ${STROKE}/><path d="M 46 28 Q 56 28 56 38 Q 56 48 46 48" fill="none" ${STROKE}/><path d="M 14 22 L 46 22" ${STROKE}/></svg>`,
+            'I need help': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#fb923c" ${STROKE}/><path d="M 22 24 Q 22 14 32 14 Q 42 14 42 24 Q 42 30 35 33 L 32 38" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="48" r="3.5" fill="#fff"/></svg>`,
+
+            // ===== Emotions =====
+            "I'm happy": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#fcd34d" ${STROKE}/><circle cx="23" cy="26" r="3" fill="#1a1a1a"/><circle cx="41" cy="26" r="3" fill="#1a1a1a"/><path d="M 20 38 Q 32 50 44 38" fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+            "I'm sad": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#93c5fd" ${STROKE}/><path d="M 19 24 L 27 24 M 37 24 L 45 24" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/><circle cx="23" cy="30" r="2.5" fill="#1a1a1a"/><circle cx="41" cy="30" r="2.5" fill="#1a1a1a"/><path d="M 22 46 Q 32 38 42 46" fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/><path d="M 23 32 Q 23 40 19 44 Q 17 46 19 46 Q 23 46 23 40 Z" fill="#60a5fa" ${THIN}/></svg>`,
+            "I'm tired": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#c4b5fd" ${STROKE}/><path d="M 16 26 Q 22 30 28 26" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/><path d="M 36 26 Q 42 30 48 26" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/><path d="M 24 44 Q 32 40 40 44" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/><text x="48" y="18" font-family="Arial Black, sans-serif" font-size="14" fill="#1a1a1a" font-weight="900">z</text><text x="54" y="10" font-family="Arial Black, sans-serif" font-size="10" fill="#1a1a1a" font-weight="900">z</text></svg>`,
+            "I'm excited": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#fb923c" ${STROKE}/><polygon points="22,18 24,24 30,24 25,28 27,34 22,30 17,34 19,28 14,24 20,24" fill="#1a1a1a"/><polygon points="42,18 44,24 50,24 45,28 47,34 42,30 37,34 39,28 34,24 40,24" fill="#1a1a1a"/><path d="M 19 38 Q 32 52 45 38 Q 42 46 32 46 Q 22 46 19 38 Z" fill="#1a1a1a"/></svg>`,
+            "I'm calm": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#86efac" ${STROKE}/><path d="M 18 26 Q 23 22 28 26" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/><path d="M 36 26 Q 41 22 46 26" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/><path d="M 22 42 Q 32 46 42 42" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/></svg>`,
+            "I'm angry": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#ef4444" ${STROKE}/><path d="M 16 20 L 28 26" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/><path d="M 48 20 L 36 26" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/><circle cx="22" cy="31" r="2.5" fill="#1a1a1a"/><circle cx="42" cy="31" r="2.5" fill="#1a1a1a"/><path d="M 22 46 Q 32 38 42 46" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/></svg>`,
+            "I'm worried": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#fde68a" ${STROKE}/><path d="M 16 22 Q 21 18 26 22" fill="none" stroke="#1a1a1a" stroke-width="2.8" stroke-linecap="round"/><path d="M 38 22 Q 43 18 48 22" fill="none" stroke="#1a1a1a" stroke-width="2.8" stroke-linecap="round"/><circle cx="22" cy="30" r="2.3" fill="#1a1a1a"/><circle cx="42" cy="30" r="2.3" fill="#1a1a1a"/><path d="M 22 44 Q 25 41 28 44 Q 31 47 34 44 Q 37 41 40 44 Q 42 46 42 44" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/><path d="M 50 16 Q 53 22 50 26 Q 47 22 50 16 Z" fill="#60a5fa" ${THIN}/></svg>`,
+
+            // ===== Control =====
+            'Stop': `<svg viewBox="0 0 64 64"><polygon points="22,6 42,6 58,22 58,42 42,58 22,58 6,42 6,22" fill="#ef4444" ${STROKE}/><text x="32" y="38" font-family="Arial Black, sans-serif" font-size="14" fill="#fff" font-weight="900" text-anchor="middle" letter-spacing="0.5">STOP</text></svg>`,
+
+            // ===== Rhymes =====
+            'Three Little Ducks': `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="44" rx="22" ry="14" fill="#fbbf24" ${STROKE}/><circle cx="48" cy="24" r="11" fill="#fbbf24" ${STROKE}/><path d="M 55 23 L 62 21 L 62 27 L 56 27 Z" fill="#f97316" ${STROKE}/><circle cx="50" cy="22" r="2" fill="#1a1a1a"/><circle cx="50.5" cy="21.5" r="0.8" fill="#fff"/><path d="M 22 40 Q 28 32 38 38" fill="none" ${THIN}/><path d="M 10 50 Q 14 46 18 50 Q 22 54 26 50" fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+            'Four in a Bed': `<svg viewBox="0 0 64 64"><rect x="4" y="22" width="6" height="34" rx="2" fill="#a78bfa" ${STROKE}/><rect x="54" y="34" width="6" height="22" rx="2" fill="#a78bfa" ${STROKE}/><rect x="4" y="34" width="56" height="14" fill="#ede9fe" ${STROKE}/><rect x="4" y="40" width="56" height="10" fill="#a78bfa" ${STROKE}/><rect x="10" y="28" width="16" height="8" rx="2" fill="#fff" ${STROKE}/><line x1="20" y1="40" x2="20" y2="50" ${THIN}/><line x1="34" y1="40" x2="34" y2="50" ${THIN}/><line x1="48" y1="40" x2="48" y2="50" ${THIN}/></svg>`,
+            'Five Little Speckled Frogs': `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="44" rx="24" ry="14" fill="#22c55e" ${STROKE}/><circle cx="22" cy="22" r="10" fill="#22c55e" ${STROKE}/><circle cx="42" cy="22" r="10" fill="#22c55e" ${STROKE}/><circle cx="22" cy="22" r="4" fill="#fff" ${THIN}/><circle cx="42" cy="22" r="4" fill="#fff" ${THIN}/><circle cx="22" cy="22" r="2" fill="#1a1a1a"/><circle cx="42" cy="22" r="2" fill="#1a1a1a"/><path d="M 20 46 Q 32 54 44 46" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/><circle cx="14" cy="44" r="2" fill="#15803d"/><circle cx="50" cy="44" r="2" fill="#15803d"/><circle cx="32" cy="54" r="2" fill="#15803d"/></svg>`,
+            'Twinkle Twinkle Little Star': `<svg viewBox="0 0 64 64"><polygon points="32,4 40,22 60,24 45,38 50,58 32,48 14,58 19,38 4,24 24,22" fill="#fcd34d" ${STROKE}/><circle cx="10" cy="10" r="2" fill="#1a1a1a"/><path d="M 54 8 L 56 12 L 60 10 L 56 14 L 58 18 L 54 14 L 50 18 L 52 14 L 48 10 L 52 12 Z" fill="#1a1a1a" opacity="0.7"/></svg>`,
+            'Row Row Row Your Boat': `<svg viewBox="0 0 64 64"><line x1="32" y1="6" x2="32" y2="38" ${STROKE} stroke-width="3.5"/><path d="M 32 8 L 52 30 L 32 30 Z" fill="#fff" ${STROKE}/><path d="M 6 38 L 58 38 L 52 54 Q 50 56 46 56 L 18 56 Q 14 56 12 54 Z" fill="#fbbf24" ${STROKE}/><path d="M 4 58 Q 12 54 20 58 Q 28 62 36 58 Q 44 54 52 58 Q 58 60 62 58" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/></svg>`,
+            'Old MacDonald': `<svg viewBox="0 0 64 64"><path d="M 6 28 L 32 8 L 58 28 L 58 32 L 6 32 Z" fill="#dc2626" ${STROKE}/><rect x="10" y="28" width="44" height="30" fill="#fef3c7" ${STROKE}/><rect x="24" y="38" width="16" height="20" fill="#dc2626" ${STROKE}/><line x1="32" y1="38" x2="32" y2="58" stroke="#1a1a1a" stroke-width="2"/><path d="M 24 38 L 40 58 M 40 38 L 24 58" stroke="#1a1a1a" stroke-width="1.5" opacity="0.5"/><rect x="14" y="36" width="7" height="7" fill="#fff" ${THIN}/><rect x="43" y="36" width="7" height="7" fill="#fff" ${THIN}/><line x1="14" y1="39.5" x2="21" y2="39.5" stroke="#1a1a1a" stroke-width="1"/><line x1="17.5" y1="36" x2="17.5" y2="43" stroke="#1a1a1a" stroke-width="1"/><line x1="43" y1="39.5" x2="50" y2="39.5" stroke="#1a1a1a" stroke-width="1"/><line x1="46.5" y1="36" x2="46.5" y2="43" stroke="#1a1a1a" stroke-width="1"/></svg>`,
+            "If You're Happy and You Know It": `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#fcd34d" ${STROKE}/><circle cx="23" cy="26" r="3" fill="#1a1a1a"/><circle cx="41" cy="26" r="3" fill="#1a1a1a"/><path d="M 20 38 Q 32 50 44 38" fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+            'Head, Shoulders, Knees and Toes': `<svg viewBox="0 0 64 64"><circle cx="32" cy="14" r="9" fill="#fcd34d" ${STROKE}/><circle cx="28" cy="13" r="1.3" fill="#1a1a1a"/><circle cx="36" cy="13" r="1.3" fill="#1a1a1a"/><path d="M 28 17 Q 32 19 36 17" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/><path d="M 20 28 L 22 44 L 30 44 L 30 56 L 34 56 L 34 44 L 42 44 L 44 28 Z" fill="#3b82f6" ${STROKE}/><circle cx="20" cy="28" r="3" fill="#22c55e" ${THIN}/><circle cx="44" cy="28" r="3" fill="#22c55e" ${THIN}/><circle cx="30" cy="48" r="2.6" fill="#ef4444" ${THIN}/><circle cx="34" cy="48" r="2.6" fill="#ef4444" ${THIN}/><ellipse cx="29" cy="58" rx="4" ry="2.2" fill="#92400e" ${THIN}/><ellipse cx="35" cy="58" rx="4" ry="2.2" fill="#92400e" ${THIN}/></svg>`,
+            'The Wheels on the Bus': `<svg viewBox="0 0 64 64"><path d="M 4 22 L 4 44 Q 4 48 8 48 L 56 48 Q 60 48 60 44 L 60 26 Q 60 22 56 22 Z" fill="#fbbf24" ${STROKE}/><rect x="8" y="26" width="10" height="10" rx="1" fill="#bfdbfe" ${THIN}/><rect x="20" y="26" width="10" height="10" rx="1" fill="#bfdbfe" ${THIN}/><rect x="32" y="26" width="10" height="10" rx="1" fill="#bfdbfe" ${THIN}/><rect x="44" y="26" width="12" height="14" rx="1" fill="#bfdbfe" ${THIN}/><rect x="6" y="40" width="52" height="3" fill="#1a1a1a"/><circle cx="16" cy="52" r="7" fill="#1a1a1a"/><circle cx="16" cy="52" r="3" fill="#fef3c7" ${THIN}/><circle cx="48" cy="52" r="7" fill="#1a1a1a"/><circle cx="48" cy="52" r="3" fill="#fef3c7" ${THIN}/></svg>`,
+        };
+
+        // ===== Custom words (localStorage) =====
+        const CUSTOM_KEY = 'aac_custom_words_v1';
+        const SECTIONS_KEY = 'aac_custom_sections_v1';
+
+        // Custom-section color palettes
+        const CUSTOM_PALETTES = [
+            { name: 'Sun',    bg: '#fde68a', light: '#fef3c7', ink: '#854d0e', tileBg: '#fffbeb', tileBorder: '#fcd34d', tileHoverBg: '#fef3c7', tileHoverBorder: '#fbbf24' },
+            { name: 'Rose',   bg: '#fda4af', light: '#fecdd3', ink: '#9f1239', tileBg: '#fff1f2', tileBorder: '#fda4af', tileHoverBg: '#ffe4e6', tileHoverBorder: '#fb7185' },
+            { name: 'Plum',   bg: '#d8b4fe', light: '#e9d5ff', ink: '#6b21a8', tileBg: '#faf5ff', tileBorder: '#d8b4fe', tileHoverBg: '#f3e8ff', tileHoverBorder: '#c084fc' },
+            { name: 'Sky',    bg: '#7dd3fc', light: '#bae6fd', ink: '#075985', tileBg: '#f0f9ff', tileBorder: '#bae6fd', tileHoverBg: '#e0f2fe', tileHoverBorder: '#38bdf8' },
+            { name: 'Mint',   bg: '#6ee7b7', light: '#a7f3d0', ink: '#065f46', tileBg: '#ecfdf5', tileBorder: '#a7f3d0', tileHoverBg: '#d1fae5', tileHoverBorder: '#34d399' },
+            { name: 'Citrus', bg: '#fdba74', light: '#fed7aa', ink: '#7c2d12', tileBg: '#fff7ed', tileBorder: '#fed7aa', tileHoverBg: '#ffedd5', tileHoverBorder: '#fb923c' }
+        ];
+        const categoryLabels = {
+            instruments: 'Instruments',
+            modifiers: 'Volume & Actions',
+            preferences: 'Preferences & Wants',
+            needs: 'Needs',
+            emotions: 'Emotions & Feelings',
+            control: 'Control',
+            rhymes: 'Songs & Rhymes'
+        };
+        const categoryFills = {
+            instruments: '#a5b4fc',
+            modifiers:   '#fbcfe8',
+            preferences: '#a7f3d0',
+            needs:       '#fdba74',
+            emotions:    '#c4b5fd',
+            control:     '#93c5fd',
+            rhymes:      '#d8b4fe'
+        };
+        const categoryInk = {
+            instruments: '#3730a3',
+            modifiers:   '#831843',
+            preferences: '#065f46',
+            needs:       '#92400e',
+            emotions:    '#5b21b6',
+            control:     '#0c2d6b',
+            rhymes:      '#4c1d95'
+        };
+        function loadCustom() {
+            try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || {}; }
+            catch (e) { return {}; }
+        }
+        function saveCustom(data) {
+            try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(data)); } catch (e) {}
+        }
+        function getCustomWords(category) {
+            return loadCustom()[category] || [];
+        }
+        function addCustomWord(category, word, emoji) {
+            const data = loadCustom();
+            if (!data[category]) data[category] = [];
+            data[category].push({ word, emoji: emoji || null });
+            saveCustom(data);
+        }
+        function removeCustomWord(category, word) {
+            const data = loadCustom();
+            if (!data[category]) return;
+            data[category] = data[category].filter(w => w.word !== word);
+            saveCustom(data);
+        }
+        function generatedSymbol(word, category) {
+            const accent = getCategoryAccent(category);
+            const letter = (word.trim().charAt(0) || '?').toUpperCase();
+            return `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="${accent.bg}" stroke="#1a1a1a" stroke-width="3"/><text x="32" y="42" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="28" font-weight="900" fill="${accent.ink}">${letter}</text></svg>`;
+        }
+
+        function getCategoryAccent(category) {
+            if (categoryFills[category]) {
+                return { bg: categoryFills[category], ink: categoryInk[category] || '#1a1a1a' };
+            }
+            const section = loadSections().find(s => s.id === category);
+            if (section) {
+                const p = CUSTOM_PALETTES[section.paletteIdx] || CUSTOM_PALETTES[0];
+                return { bg: p.bg, ink: p.ink };
+            }
+            return { bg: '#e5e7eb', ink: '#1a1a1a' };
+        }
+
+        // ===== Custom sections =====
+        function loadSections() {
+            try { return JSON.parse(localStorage.getItem(SECTIONS_KEY)) || []; }
+            catch (e) { return []; }
+        }
+        function saveSections(arr) {
+            try { localStorage.setItem(SECTIONS_KEY, JSON.stringify(arr)); } catch (e) {}
+        }
+        function addSection(name, paletteIdx) {
+            const sections = loadSections();
+            const id = 'custom-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+            sections.push({ id, name, paletteIdx });
+            saveSections(sections);
+            return id;
+        }
+        function removeSection(id) {
+            saveSections(loadSections().filter(s => s.id !== id));
+            // also clear any custom words for that section
+            const data = loadCustom();
+            delete data[id];
+            saveCustom(data);
+        }
+
+        function buildCustomSectionDOM(section) {
+            const p = CUSTOM_PALETTES[section.paletteIdx] || CUSTOM_PALETTES[0];
+            const sectionEl = document.createElement('section');
+            sectionEl.className = 'section section-custom';
+            sectionEl.style.setProperty('--cat-bg', p.bg);
+            sectionEl.style.setProperty('--cat-bg-light', p.light);
+            sectionEl.style.setProperty('--cat-ink', p.ink);
+            sectionEl.style.setProperty('--tile-bg', p.tileBg);
+            sectionEl.style.setProperty('--tile-border', p.tileBorder);
+            sectionEl.style.setProperty('--tile-hover-bg', p.tileHoverBg);
+            sectionEl.style.setProperty('--tile-hover-border', p.tileHoverBorder);
+
+            const header = document.createElement('div');
+            header.className = 'category-header';
+            const letter = (section.name.trim().charAt(0) || '?').toUpperCase();
+            header.innerHTML = `
+                <div class="category-icon">
+                    <svg viewBox="0 0 40 40" class="w-full h-full">
+                        <circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                        <text x="20" y="26" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="14" font-weight="900" fill="currentColor">${letter}</text>
+                    </svg>
+                </div>
+                <span></span>
+            `;
+            header.querySelector('span').textContent = section.name;
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'section-delete';
+            delBtn.type = 'button';
+            delBtn.textContent = '×';
+            delBtn.title = 'Remove this section';
+            delBtn.setAttribute('aria-label', `Remove section ${section.name}`);
+            delBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (confirm(`Remove the "${section.name}" section? All its words will be deleted.`)) {
+                    removeSection(section.id);
+                    initializeUI();
+                }
+            });
+            header.appendChild(delBtn);
+
+            const grid = document.createElement('div');
+            grid.id = 'grid-' + section.id;
+            grid.className = 'grid gap-4';
+
+            sectionEl.appendChild(header);
+            sectionEl.appendChild(grid);
+            return sectionEl;
+        }
+
+        function renderCustomSections() {
+            const host = document.getElementById('customSections');
+            if (!host) return;
+            host.innerHTML = '';
+            const sections = loadSections();
+            sections.forEach(section => {
+                const dom = buildCustomSectionDOM(section);
+                host.appendChild(dom);
+                createSection('grid-' + section.id, [], section.id);
+            });
+        }
+
+        // App State
+        let state = {
+            userProfile: 'small',
+            selectedWords: []
+        };
+
+        // Word buttons organized by category
+        const wordLibrary = {
+            instruments: [
+                { word: 'Piano', category: 'instruments' },
+                { word: 'Guitar', category: 'instruments' },
+                { word: 'Drums', category: 'instruments' },
+                { word: 'Xylophone', category: 'instruments' },
+                { word: 'Bells', category: 'instruments' },
+                { word: 'Ukulele', category: 'instruments' },
+                { word: 'Djembe', category: 'instruments' },
+                { word: 'Ocean Drum', category: 'instruments' },
+                { word: 'Gathering Drum', category: 'instruments' },
+                { word: 'Boomwhackers', category: 'instruments' },
+                { word: 'Chimes', category: 'instruments' },
+                { word: 'Percussion', category: 'instruments' },
+                { word: 'Microphone', category: 'instruments' }
+            ],
+            modifiers: [
+                { word: 'Play', category: 'modifiers' },
+                { word: 'Pause', category: 'modifiers' },
+                { word: 'Quiet', category: 'modifiers' },
+                { word: 'Loud', category: 'modifiers' },
+                { word: 'Go Slower', category: 'modifiers' },
+                { word: 'Go Faster', category: 'modifiers' }
+            ],
+            preferences: [
+                { word: 'I like', category: 'preferences' },
+                { word: 'I don\'t like', category: 'preferences' },
+                { word: 'I want', category: 'preferences' },
+                { word: 'I want more', category: 'preferences' },
+                { word: 'I want less', category: 'preferences' }
+            ],
+            needs: [
+                { word: 'I need the toilet', category: 'needs' },
+                { word: 'I need water', category: 'needs' },
+                { word: 'I need a break', category: 'needs' },
+                { word: 'I need help', category: 'needs' }
+            ],
+            emotions: [
+                { word: 'I\'m happy', category: 'emotions' },
+                { word: 'I\'m sad', category: 'emotions' },
+                { word: 'I\'m tired', category: 'emotions' },
+                { word: 'I\'m excited', category: 'emotions' },
+                { word: 'I\'m calm', category: 'emotions' },
+                { word: 'I\'m angry', category: 'emotions' },
+                { word: 'I\'m worried', category: 'emotions' }
+            ],
+            control: [
+                { word: 'Stop', category: 'control' },
+                { word: 'Go', category: 'control' }
+            ],
+            rhymes: [
+                { word: 'Three Little Ducks', category: 'rhymes' },
+                { word: 'Four in a Bed', category: 'rhymes' },
+                { word: 'Five Little Speckled Frogs', category: 'rhymes' },
+                { word: 'Twinkle Twinkle Little Star', category: 'rhymes' },
+                { word: 'Row Row Row Your Boat', category: 'rhymes' },
+                { word: 'Old MacDonald', category: 'rhymes' },
+                { word: "If You're Happy and You Know It", category: 'rhymes' },
+                { word: 'Head, Shoulders, Knees and Toes', category: 'rhymes' },
+                { word: 'The Wheels on the Bus', category: 'rhymes' }
+            ]
+        };
+
+        // Speak function
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = state.userProfile === 'small' ? 1.3 : 1.0;
+                utterance.volume = 1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Update sentence display
+        function updateSentenceDisplay() {
+            const display = document.getElementById('sentenceDisplay');
+            if (state.selectedWords.length === 0) {
+                display.textContent = 'Tap buttons to build a sentence';
+            } else {
+                display.textContent = state.selectedWords.join(' ');
+            }
+        }
+
+        // Get grid columns based on profile
+        function getGridCols() {
+            return {
+                'small': 'grid-cols-5',
+                'medium': 'grid-cols-4',
+                'large': 'grid-cols-3'
+            }[state.userProfile];
+        }
+
+        // Create button for a word
+        function createWordButton(word, category, opts) {
+            opts = opts || {};
+            const btn = document.createElement('button');
+            btn.className = `widget-button btn-${category}`;
+            if (opts.custom) btn.classList.add('custom-word');
+
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'symbol-icon';
+
+            if (opts.emoji) {
+                iconDiv.innerHTML = `<div class="emoji-icon">${opts.emoji}</div>`;
+            } else if (symbolMap[word]) {
+                iconDiv.innerHTML = symbolMap[word];
+            } else if (opts.custom) {
+                iconDiv.innerHTML = generatedSymbol(word, category);
+            } else {
+                iconDiv.innerHTML = '<svg viewBox="0 0 40 40"><text x="20" y="24" text-anchor="middle" font-size="24">?</text></svg>';
+            }
+
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'label';
+            labelDiv.textContent = word;
+
+            btn.appendChild(iconDiv);
+            btn.appendChild(labelDiv);
+
+            if (opts.custom) {
+                const del = document.createElement('div');
+                del.className = 'custom-delete';
+                del.textContent = '×';
+                del.title = 'Remove this word';
+                del.setAttribute('role', 'button');
+                del.setAttribute('aria-label', `Remove ${word}`);
+                del.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (confirm(`Remove "${word}"?`)) {
+                        removeCustomWord(category, word);
+                        initializeUI();
+                    }
+                });
+                btn.appendChild(del);
+            }
+
+            btn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                speak(word);
+                state.selectedWords.push(word);
+                updateSentenceDisplay();
+            };
+            return btn;
+        }
+
+        // "+ Add Word" tile
+        function createAddTile(category) {
+            const tile = document.createElement('button');
+            tile.className = `widget-button btn-${category} add-tile`;
+            tile.setAttribute('aria-label', `Add a new word to ${categoryLabels[category] || category}`);
+            tile.innerHTML = `
+                <div class="symbol-icon">
+                    <svg viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="24" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="5 4"/>
+                        <path d="M 22 32 L 42 32 M 32 22 L 32 42" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="label">Add Word</div>
+            `;
+            tile.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openAddDialog(category);
+            });
+            return tile;
+        }
+
+        // Create section
+        function createSection(gridId, words, category) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+
+            const gridCols = getGridCols();
+            grid.className = `grid ${gridCols} gap-4`;
+            grid.innerHTML = '';
+
+            words.forEach(({ word, category: c }) => {
+                grid.appendChild(createWordButton(word, c));
+            });
+
+            getCustomWords(category).forEach(({ word, emoji }) => {
+                grid.appendChild(createWordButton(word, category, { custom: true, emoji }));
+            });
+
+            grid.appendChild(createAddTile(category));
+        }
+
+        // Initialize UI
+        function initializeUI() {
+            createSection('preferencesGrid', wordLibrary.preferences, 'preferences');
+            createSection('instrumentsGrid', wordLibrary.instruments, 'instruments');
+            createSection('rhymesGrid', wordLibrary.rhymes, 'rhymes');
+            createSection('modifiersGrid', wordLibrary.modifiers, 'modifiers');
+            createSection('needsGrid', wordLibrary.needs, 'needs');
+            createSection('emotionsGrid', wordLibrary.emotions, 'emotions');
+            createSection('controlGrid', wordLibrary.control, 'control');
+            renderCustomSections();
+
+            // Update profile buttons
+            document.querySelectorAll('.profile-btn').forEach(btn => {
+                const profile = btn.dataset.profile;
+                btn.classList.toggle('active', profile === state.userProfile);
+            });
+        }
+
+        // ===== Add-word dialog =====
+        function getCategoryLabel(category) {
+            if (categoryLabels[category]) return categoryLabels[category];
+            const section = loadSections().find(s => s.id === category);
+            return section ? section.name : category;
+        }
+        function openAddDialog(category) {
+            const dlg = document.getElementById('addDialog');
+            document.getElementById('addDialogCategory').textContent = getCategoryLabel(category);
+            const wordInput = document.getElementById('addWordInput');
+            const emojiInput = document.getElementById('addEmojiInput');
+            wordInput.value = '';
+            emojiInput.value = '';
+            dlg.dataset.category = category;
+            dlg.classList.remove('hidden');
+            setTimeout(() => wordInput.focus(), 50);
+        }
+        function closeAddDialog() {
+            document.getElementById('addDialog').classList.add('hidden');
+        }
+        function commitAddDialog() {
+            const dlg = document.getElementById('addDialog');
+            const category = dlg.dataset.category;
+            const word = document.getElementById('addWordInput').value.trim();
+            const emoji = document.getElementById('addEmojiInput').value.trim();
+            if (!word || !category) return;
+            addCustomWord(category, word, emoji);
+            closeAddDialog();
+            initializeUI();
+        }
+
+        // ===== Add-section dialog =====
+        let pendingPaletteIdx = 0;
+        function buildPaletteSwatches() {
+            const row = document.getElementById('paletteRow');
+            row.innerHTML = '';
+            CUSTOM_PALETTES.forEach((p, idx) => {
+                const sw = document.createElement('button');
+                sw.type = 'button';
+                sw.className = 'palette-swatch' + (idx === pendingPaletteIdx ? ' selected' : '');
+                sw.style.background = `linear-gradient(135deg, ${p.light} 0%, ${p.bg} 100%)`;
+                sw.style.color = p.ink;
+                sw.title = p.name;
+                sw.setAttribute('aria-label', p.name);
+                sw.addEventListener('click', () => {
+                    pendingPaletteIdx = idx;
+                    buildPaletteSwatches();
+                });
+                row.appendChild(sw);
+            });
+        }
+        function openSectionDialog() {
+            const dlg = document.getElementById('sectionDialog');
+            document.getElementById('sectionNameInput').value = '';
+            pendingPaletteIdx = Math.floor(Math.random() * CUSTOM_PALETTES.length);
+            buildPaletteSwatches();
+            dlg.classList.remove('hidden');
+            setTimeout(() => document.getElementById('sectionNameInput').focus(), 50);
+        }
+        function closeSectionDialog() {
+            document.getElementById('sectionDialog').classList.add('hidden');
+        }
+        function commitSectionDialog() {
+            const name = document.getElementById('sectionNameInput').value.trim();
+            if (!name) return;
+            addSection(name, pendingPaletteIdx);
+            closeSectionDialog();
+            initializeUI();
+        }
+
+        // Event Listeners
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            const panel = document.getElementById('settingsPanel');
+            panel.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.profile-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.userProfile = btn.dataset.profile;
+                initializeUI();
+            });
+        });
+
+        document.getElementById('speakBtn').addEventListener('click', () => {
+            if (state.selectedWords.length > 0) {
+                speak(state.selectedWords.join(' '));
+            }
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            state.selectedWords = [];
+            updateSentenceDisplay();
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            window.speechSynthesis.cancel();
+        });
+
+        // Add-word dialog wiring
+        document.getElementById('addCancel').addEventListener('click', closeAddDialog);
+        document.getElementById('addSave').addEventListener('click', commitAddDialog);
+        document.getElementById('addDialog').addEventListener('click', (e) => {
+            if (e.target.id === 'addDialog') closeAddDialog();
+        });
+        ['addWordInput', 'addEmojiInput'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); commitAddDialog(); }
+                if (e.key === 'Escape') closeAddDialog();
+            });
+        });
+
+        // Add-section dialog wiring
+        document.getElementById('addSectionBtn').addEventListener('click', openSectionDialog);
+        document.getElementById('sectionCancel').addEventListener('click', closeSectionDialog);
+        document.getElementById('sectionSave').addEventListener('click', commitSectionDialog);
+        document.getElementById('sectionDialog').addEventListener('click', (e) => {
+            if (e.target.id === 'sectionDialog') closeSectionDialog();
+        });
+        document.getElementById('sectionNameInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); commitSectionDialog(); }
+            if (e.key === 'Escape') closeSectionDialog();
+        });
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeUI();
+            updateSentenceDisplay();
+            console.log('Music Therapy AAC - Widgit-inspired Edition Loaded! 🎵');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="uploads/favicon-32x32.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources | Treefrog Music Therapy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #f3efe5; font-family: 'DM Sans', sans-serif; color: #2a2a22; }
+    @media (max-width: 768px) {
+      .doc-pad { padding: 120px 20px 60px !important; }
+      .doc-body { padding: 32px 24px !important; }
+      .res-card { grid-template-columns: 1fr !important; }
+      .res-card-media { min-height: 200px !important; }
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: 0.6;
+    }
+    #root { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="policy-chrome.jsx"></script>
+<script type="text/babel">
+
+function ResourceCard({ tag, title, blurb, bullets, href, ctaLabel, media }) {
+  return (
+    <article className="res-card" style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr 1.2fr',
+      gap: 0,
+      background: C.white,
+      borderRadius: 20,
+      overflow: 'hidden',
+      border: `1px solid ${C.creamDark}`,
+      boxShadow: '0 4px 28px rgba(45,74,30,0.06)',
+      marginBottom: 32,
+    }}>
+      <div className="res-card-media" style={{
+        background: 'linear-gradient(135deg, #dcebd0 0%, #b9d690 100%)',
+        position: 'relative',
+        minHeight: 280,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 28,
+      }}>
+        {media}
+      </div>
+      <div style={{ padding: '36px 36px 32px' }}>
+        <p style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: 2.5,
+          textTransform: 'uppercase', color: C.olive, marginBottom: 10,
+        }}>{tag}</p>
+        <h2 style={{
+          fontFamily: 'Playfair Display, serif', fontSize: 28,
+          color: C.forest, fontWeight: 600, lineHeight: 1.25, marginBottom: 14,
+        }}>{title}</h2>
+        <p style={{ fontSize: 15, color: C.warm, lineHeight: 1.75, marginBottom: bullets ? 18 : 24 }}>
+          {blurb}
+        </p>
+        {bullets && (
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0' }}>
+            {bullets.map((b, i) => (
+              <li key={i} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                fontSize: 14, color: C.warm, lineHeight: 1.6, marginBottom: 8,
+              }}>
+                <span style={{
+                  display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
+                  background: C.olive, flexShrink: 0, marginTop: 8,
+                }}/>
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <a href={href} target="_blank" rel="noopener" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          padding: '12px 22px', background: C.forest, color: C.white,
+          borderRadius: 100, textDecoration: 'none',
+          fontSize: 14, fontWeight: 600, letterSpacing: 0.2,
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={e=>{ e.currentTarget.style.background=C.olive; e.currentTarget.style.transform='translateY(-1px)'; }}
+        onMouseLeave={e=>{ e.currentTarget.style.background=C.forest; e.currentTarget.style.transform='translateY(0)'; }}>
+          {ctaLabel}
+          <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+        </a>
+      </div>
+    </article>
+  );
+}
+
+// Decorative AAC tile preview — small grid of soft-coloured pads
+function AACTilePreview() {
+  const tiles = [
+    { bg: '#eef2ff', ink: '#3730a3', label: 'Piano', glyph: '🎹' },
+    { bg: '#fdf2f8', ink: '#831843', label: 'Play',  glyph: '▶' },
+    { bg: '#f0fdf4', ink: '#065f46', label: 'More',  glyph: '＋' },
+    { bg: '#fffbeb', ink: '#92400e', label: 'Break', glyph: '☕' },
+    { bg: '#faf5ff', ink: '#5b21b6', label: 'Happy', glyph: '☺' },
+    { bg: '#f0f9ff', ink: '#0c2d6b', label: 'Stop',  glyph: '⏹' },
+  ];
+  return (
+    <div style={{
+      width: '100%', maxWidth: 280,
+      display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10,
+    }}>
+      {tiles.map((t, i) => (
+        <div key={i} style={{
+          aspectRatio: '1',
+          background: t.bg,
+          color: t.ink,
+          borderRadius: 14,
+          border: `2px solid ${t.ink}22`,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          gap: 4,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        }}>
+          <span style={{ fontSize: 28, lineHeight: 1 }}>{t.glyph}</span>
+          <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 0.3, textTransform: 'uppercase' }}>{t.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Resources() {
+  return (
+    <>
+      <PolicyNav />
+
+      <main className="doc-pad" style={{ padding: '140px 40px 80px' }}>
+        <div style={{ maxWidth: 920, margin: '0 auto' }}>
+          {/* Heading */}
+          <div style={{ marginBottom: 56, textAlign: 'center' }}>
+            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: 3, textTransform: 'uppercase', color: C.olive, marginBottom: 12 }}>Free tools & downloads</p>
+            <h1 style={{
+              fontFamily: 'Playfair Display, serif',
+              fontSize: 52, color: C.forest, fontWeight: 600,
+              lineHeight: 1.15, marginBottom: 18,
+            }}>Resources</h1>
+            <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.7, maxWidth: 580, margin: '0 auto' }}>
+              A small library of practical tools to support music therapy sessions, music lessons, and the people we work with — free to use, designed for accessibility.
+            </p>
+          </div>
+
+          {/* Cards */}
+          <ResourceCard
+            tag="Communication Tool"
+            title="Music Therapy AAC"
+            blurb="A free, browser-based augmentative and alternative communication board built for music therapy sessions and music lessons. Tap symbol tiles to build a sentence, then press Speak — the device reads it aloud."
+            bullets={[
+              'Curated vocabulary for instruments, songs, emotions, needs and preferences',
+              'Add your own words and create custom sections on the fly',
+              'Small, medium and large tile profiles for different motor and visual needs',
+              'Works offline once loaded — no sign-in, no tracking',
+            ]}
+            href="Music Therapy AAC.html"
+            ctaLabel="Open the AAC tool"
+            media={<AACTilePreview />}
+          />
+
+          {/* Coming soon / footer note */}
+          <div style={{
+            background: C.cream, borderRadius: 16,
+            border: `1px dashed ${C.creamDark}`,
+            padding: '28px 32px', textAlign: 'center', marginTop: 8,
+          }}>
+            <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: C.olive, marginBottom: 8 }}>More on the way</p>
+            <p style={{ fontSize: 15, color: C.warm, lineHeight: 1.7, maxWidth: 560, margin: '0 auto' }}>
+              Visual schedules, song books and family handouts are in development. If there's something you'd love to see here, <a href="index.html#contact" style={{ color: C.olive, textDecoration: 'underline', fontWeight: 600 }}>get in touch</a>.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <PolicyFooter />
+      <AccessibilityMenu />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Resources />);
+</script>
+</body>
+</html>
