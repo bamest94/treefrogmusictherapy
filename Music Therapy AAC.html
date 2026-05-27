@@ -835,10 +835,15 @@
             }
             .section-custom .category-header { padding-right: 3rem; }
 
-            /* Cap grid columns on small screens */
-            #app .grid-cols-4,
-            #app .grid-cols-5 {
+            /* Profile-aware grid columns on tablets (≤1023px) — preserves S/M/L difference */
+            #app[data-profile="small"]  main section > .grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+            #app[data-profile="medium"] main section > .grid {
                 grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
+            #app[data-profile="large"]  main section > .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
             }
 
             .add-section-btn {
@@ -853,12 +858,31 @@
             .palette-swatch { border-width: 2.5px; }
         }
 
+        /* ===== Phone portrait (≤640px) ===== */
+        @media (max-width: 640px) {
+            #app[data-profile="small"]  main section > .grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
+            #app[data-profile="medium"] main section > .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+            #app[data-profile="large"]  main section > .grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            }
+            #app[data-profile="large"] .widget-button { min-height: 150px; }
+            #app[data-profile="large"] .symbol-icon { width: 6rem; height: 6rem; }
+        }
+
         /* ===== Extra small (≤420px) ===== */
         @media (max-width: 420px) {
-            #app .grid-cols-3,
-            #app .grid-cols-4,
-            #app .grid-cols-5 {
+            #app[data-profile="small"]  main section > .grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+            #app[data-profile="medium"] main section > .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+            #app[data-profile="large"]  main section > .grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
             }
             .widget-button { min-height: 130px; }
             .symbol-icon { width: 5rem; height: 5rem; }
@@ -870,7 +894,7 @@
     </style>
 </head>
 <body>
-    <div id="app" class="min-h-screen font-sans">
+    <div id="app" class="min-h-screen font-sans" data-profile="small">
         <!-- Header -->
         <header id="header" class="sticky top-0 z-50">
             <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
@@ -1105,8 +1129,10 @@
 
         <!-- Footer -->
         <footer class="mt-16 text-center py-8 text-gray-500 text-sm border-t border-gray-200 px-4">
+            <img src="images/treefrog-logo.png" alt="Treefrog Music Therapy" class="mx-auto mb-4" style="width: 140px; height: auto;">
             <p class="font-semibold">Music Therapy AAC - Sentence Builder</p>
             <p class="mt-2 text-gray-400">Tap buttons to build a sentence, then press Speak</p>
+            <p class="mt-4 text-xs text-gray-400">Developed by <span class="font-semibold text-gray-500">Bradley Ames-Thomson</span> for <span class="font-semibold text-gray-500">Treefrog Music Therapy</span></p>
         </footer>
     </div>
 
@@ -1813,6 +1839,9 @@
                 const profile = btn.dataset.profile;
                 btn.classList.toggle('active', profile === state.userProfile);
             });
+            // Reflect current profile on the app root for responsive CSS
+            const appEl = document.getElementById('app');
+            if (appEl) appEl.setAttribute('data-profile', state.userProfile);
         }
 
         // ===== Add-word dialog =====
