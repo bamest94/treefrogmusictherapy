@@ -18,11 +18,13 @@
   --shadow:0 2px 6px rgba(30,50,40,.10), 0 8px 20px rgba(30,50,40,.06);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-html,body{height:100%;}
+html{height:100%;}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:"Nunito","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
   display:flex; flex-direction:column; overflow:hidden;
+  height:100vh; height:100dvh; /* dvh handles iOS/Android dynamic browser toolbars */
+  padding-bottom:env(safe-area-inset-bottom);
   touch-action:manipulation; user-select:none; -webkit-user-select:none;
 }
 button{font-family:inherit;}
@@ -89,18 +91,19 @@ header .spacer{flex:1;}
 
 /* Core word rail */
 #core{
-  flex:0 0 auto; width:calc(var(--tile-min)*2*.82 + 8px);
+  flex:0 0 auto; width:calc(var(--tile-min)*2*.82 + 8px); min-height:0;
   background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
-  padding:8px; overflow-y:auto; display:grid; grid-template-columns:1fr 1fr;
+  padding:8px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  display:grid; grid-template-columns:1fr 1fr;
   gap:6px; align-content:start;
 }
 #core h3{grid-column:1/-1; margin:2px 4px; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--ink-soft);}
 
 /* Right side */
-#right{flex:1; display:flex; flex-direction:column; min-width:0; gap:8px;}
+#right{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; gap:8px;}
 #tabs{
   flex:0 0 auto; display:flex; gap:6px; overflow-x:auto; padding:2px;
-  scrollbar-width:thin;
+  scrollbar-width:thin; -webkit-overflow-scrolling:touch;
 }
 .tab{
   flex:0 0 auto; border:none; border-radius:14px; padding:8px 14px; font-size:14px; font-weight:800;
@@ -113,7 +116,8 @@ header .spacer{flex:1;}
 .tab.addTab{border-bottom-color:#B8C4BD; color:var(--ink-soft); font-size:18px;}
 
 #grid{
-  flex:1; overflow-y:auto; background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+  flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
   padding:10px; display:grid; grid-template-columns:repeat(auto-fill,minmax(var(--tile-min),1fr));
   gap:8px; align-content:start;
 }
@@ -151,7 +155,8 @@ footer{flex:0 0 auto; text-align:center; font-size:10.5px; color:#93A49A; paddin
 .overlay.open{display:flex;}
 .modal{
   background:#fff; border-radius:20px; padding:20px; width:100%; max-width:420px;
-  max-height:88vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.3);
+  max-height:88vh; max-height:85dvh; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
   user-select:text; -webkit-user-select:text;
 }
 .modal h2{margin:0 0 4px; font-size:19px; color:var(--green-dark);}
@@ -207,7 +212,21 @@ footer{flex:0 0 auto; text-align:center; font-size:10.5px; color:#93A49A; paddin
 }
 @media (max-width:520px){
   #main{flex-direction:column;}
-  #core{width:auto; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); max-height:26vh;}
+  #core{width:auto; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); max-height:26vh; flex:0 0 auto;}
+  :root{--tile-min:96px; --sym-size:48px; --tile-font:14px;}
+  header h1 small{display:none;}
+  #strip{margin:8px 8px 4px;}
+  #main{padding:0 8px 8px;}
+}
+/* Short screens (phone landscape): compress chrome so the grid keeps room */
+@media (max-height:480px){
+  header{padding:4px 10px;}
+  header .logo{width:28px;height:28px;}
+  #strip{min-height:62px; margin:6px 8px 4px; padding:5px;}
+  .abtn{min-height:50px;}
+  .stile{width:52px;height:52px;}
+  .stile svg,.stile .emoji{width:28px;height:28px;font-size:24px;}
+  footer{display:none;}
 }
 </style>
 </head>
@@ -326,6 +345,7 @@ footer{flex:0 0 auto; text-align:center; font-size:10.5px; color:#93A49A; paddin
 <div id="toast"></div>
 
 <script>
+
 "use strict";
 /* ================= SYMBOLS =================
    Original pictographic artwork drawn as inline SVG (viewBox 0 0 100 100),
@@ -442,7 +462,7 @@ const COLORS = {
 };
 
 const CORE_WORDS = [
-  {l:'I', s:'i', col:'yellow'}, {l:'you', s:'you', col:'yellow'},
+  {l:'I', sp:'i', s:'i', col:'yellow'}, {l:'you', s:'you', col:'yellow'},
   {l:'want', s:'want', col:'green'}, {l:'more', s:'more', col:'green'},
   {l:'go', s:'go', col:'green'}, {l:'stop', s:'stop', col:'red'},
   {l:'like', sp:'like', s:'like', col:'green'}, {l:"don't like", s:'dontlike', col:'red'},
@@ -574,6 +594,7 @@ function loadVoices(){
 if(synth){ loadVoices(); synth.onvoiceschanged = loadVoices; }
 
 function utter(text){
+  if(String(text).trim()==='I') text = 'i'; // some voices read a lone capital I as "capital I"
   const u = new SpeechSynthesisUtterance(text);
   const v = voices.find(v=>v.name===state.settings.voice);
   if(v) u.voice = v;
@@ -732,15 +753,15 @@ function renderLock(){
 }
 lockBtn.addEventListener('click', ()=>{
   if(state.settings.locked){
-    if(confirm('Unlock editing?\n\nYou will be able to add and remove words and sections. Tap “Lock board” again before handing the device to a child.')){
+    if(confirm('Unlock editing?\n\nYou will be able to add and remove words and sections. Tap \u201cLock board\u201d again before handing the device to a child.')){
       state.settings.locked = false; save();
       renderLock(); renderGrid(); renderTabs();
-      toast('Editing on — use “＋ Section” or the “＋ Add word” tile in any section');
+      toast('Editing on \u2014 use \u201c\uFF0B Section\u201d or the \u201c\uFF0B Add word\u201d tile in any section');
     }
   } else {
     state.settings.locked = true; save();
     renderLock(); renderGrid(); renderTabs();
-    toast('Board locked — safe to hand over');
+    toast('Board locked \u2014 safe to hand over');
   }
 });
 
@@ -864,6 +885,7 @@ if('wakeLock' in navigator){
 
 /* ================= INIT ================= */
 applySize(); renderLock(); renderCore(); renderTabs(); renderGrid(); renderSentence();
+
 
 </script>
 </body>
