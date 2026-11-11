@@ -418,11 +418,9 @@
         const heart = (x, y, k = 1, c = C.red) => `<path transform="translate(${x} ${y}) scale(${k})" stroke-width="${2.75 / k}" d="M0 10 C-15 0 -10 -13 0 -5 C10 -13 15 0 0 10 Z" fill="${c}"/>`;
         const bust = (x, y, c, k = 1) => `<g transform="translate(${x} ${y}) scale(${k})" stroke-width="${2.75 / k}"><path d="M-15 30 C-15 15 -9 11 0 11 C9 11 15 15 15 30 Z" fill="${c}"/><circle cx="0" cy="0" r="9.5" fill="${C.skin}"/></g>`;
         const hand = (x, y, rot = 0, k = 1, flip = 1, fill = C.skin) =>
-            `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${k * flip} ${k})" fill="${fill}" stroke-width="${2.75 / k}">` +
-            `<rect x="-12" y="-20" width="6.5" height="24" rx="3.2"/><rect x="-5.500" y="-24" width="6.500" height="28" rx="3.200"/>` +
-            `<rect x="1" y="-23" width="6.5" height="27" rx="3.2"/><rect x="7.500" y="-18" width="6.500" height="22" rx="3.200"/>` +
-            `<rect x="-22" y="-4" width="7" height="17" rx="3.5" transform="rotate(-32 -16 8)"/>` +
-            `<rect x="-13" y="-5" width="27.5" height="23" rx="8"/></g>`;
+            `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${k * flip} ${k})" stroke-width="${2.75 / k}">` +
+            `<path d="M-12 0 V-16 a3 3 0 0 1 6 0 V-21 a3 3 0 0 1 6 0 V-19 a3 3 0 0 1 6 0 V-13 a3 3 0 0 1 6 0 V7 C12 14 7 18 1 18 H-5 C-10 18 -13 14 -13.500 10 L-21 3.500 C-24 0.500 -23.500 -4.500 -20 -5.500 C-17.500 -6 -16 -4.500 -14.500 -2.500 Z" fill="${fill}"/>` +
+            `<path d="M-6 -16 V-5 M0 -19 V-6 M6 -13 V-5" stroke-width="${2 / k}"/></g>`;
         const waves = (y, c = C.blue) => `<path d="M3 ${y} q4.800 -5 9.600 0 t9.600 0 t9.600 0 t9.600 0 t9.600 0 t9.600 0" stroke="${c}" stroke-width="3.2"/>`;
         const cloud = (x, y) => `<path d="M${x - 9} ${y + 5} a5 5 0 0 1 1 -9.800 a7 7 0 0 1 13 -1 a5 5 0 0 1 3 10.800 Z" fill="#fff"/>`;
         const speaker = (c) => `<path d="M6 24 H18 L34 10 V54 L18 40 H6 Z" fill="${c}"/>`;
@@ -450,7 +448,7 @@
             'Help': S(`<path d="M40 8 L42 13 M49 4 V10 M58 8 L56 13" stroke="${C.red}" stroke-width="3.2"/>` + limb('M36 40 L47 24', C.blue, 5) + `<circle cx="48.5" cy="19" r="5" fill="${C.skin}"/>` + bust(24, 26, C.blue, 1.05) + `<path d="M19.500 28 Q24 31.500 28.500 28" stroke-width="2"/>`),
             'Hello': wave(),
             'Goodbye': bye(),
-            'Please': S(sparkle(55, 9, 6) + hand(27, 41, 6, 0.86, 1) + hand(37, 41, -6, 0.86, -1, '#ffcf8a')),
+            'Please': S(sparkle(9, 11, 6) + hand(39, 36, 14, 1.02, 1, '#ffcf8a') + hand(33, 39, 14, 1.02, 1)),
             'Thank you': S(face(dot(19, 33) + dot(35, 33) + `<path d="M18 41 Q27 49 36 41"/>`, C.face).replace('cx="32" cy="32" r="25"', 'cx="27" cy="37" r="21"') + heart(49, 15, 1.05)),
 
             // ---- Turn-taking ----
