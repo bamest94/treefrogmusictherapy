@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <link rel="icon" type="image/x-icon" href="uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="uploads/favicon-32x32.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources | Treefrog Music Therapy</title>
+  <meta name="description" content="Free resources from Treefrog Music Therapy: a music therapy AAC communication board and a printable open guitar chord chart, designed for accessibility.">
+  <meta name="theme-color" content="#2d4a1e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #f3efe5; font-family: 'DM Sans', sans-serif; color: #2a2a22; }
+    @media (max-width: 768px) {
+      .doc-pad { padding: 120px 20px 60px !important; }
+      .doc-body { padding: 32px 24px !important; }
+      .res-card { grid-template-columns: 1fr !important; }
+      .res-card-media { min-height: 200px !important; }
+      .res-card-body { padding: 28px 22px 26px !important; }
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: 0.6;
+    }
+    #root { position: relative; z-index: 1; }
+    .res-preview { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .res-preview:hover, .res-preview:focus-visible { transform: translateY(-3px) rotate(-0.5deg); box-shadow: 0 14px 34px rgba(45,74,30,0.22) !important; }
+    @media (prefers-reduced-motion: reduce) { .res-preview { transition: none; } }
+  </style>
+</head>
+<body>
+<noscript>
+  <div style="max-width:560px;margin:80px auto;padding:0 24px;font-family:sans-serif;line-height:1.7;color:#2a2a22">
+    <h1 style="color:#2d4a1e;margin-bottom:12px">Treefrog Music Therapy</h1>
+    <p>This page needs JavaScript to display. You can reach us on <a href="tel:+61479182329">0479 182 329</a> or <a href="mailto:contact@treefrogmusictherapy.com">contact@treefrogmusictherapy.com</a>.</p>
+  </div>
+</noscript>
+<div id="root"></div>
+<script type="text/babel" src="policy-chrome.jsx"></script>
+<script type="text/babel">
+
+function ResourceCard({ tag, title, blurb, bullets, href, ctaLabel, media, secondary }) {
+  return (
+    <article className="res-card" style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr 1.2fr',
+      gap: 0,
+      background: C.white,
+      borderRadius: 20,
+      overflow: 'hidden',
+      border: `1px solid ${C.creamDark}`,
+      boxShadow: '0 4px 28px rgba(45,74,30,0.06)',
+      marginBottom: 32,
+    }}>
+      <div className="res-card-media" style={{
+        background: 'linear-gradient(135deg, #dcebd0 0%, #b9d690 100%)',
+        position: 'relative',
+        minHeight: 280,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 28,
+      }}>
+        {media}
+      </div>
+      <div className="res-card-body" style={{ padding: '36px 36px 32px' }}>
+        <p style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: 2.5,
+          textTransform: 'uppercase', color: C.oliveInk, marginBottom: 10,
+        }}>{tag}</p>
+        <h2 style={{
+          fontFamily: 'Playfair Display, serif', fontSize: 28,
+          color: C.forest, fontWeight: 600, lineHeight: 1.25, marginBottom: 14,
+        }}>{title}</h2>
+        <p style={{ fontSize: 15, color: C.warm, lineHeight: 1.75, marginBottom: bullets ? 18 : 24 }}>
+          {blurb}
+        </p>
+        {bullets && (
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0' }}>
+            {bullets.map((b, i) => (
+              <li key={i} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                fontSize: 14, color: C.warm, lineHeight: 1.6, marginBottom: 8,
+              }}>
+                <span aria-hidden="true" style={{
+                  display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
+                  background: C.olive, flexShrink: 0, marginTop: 8,
+                }}/>
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <a href={href} target="_blank" rel="noopener" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '12px 22px', background: C.forest, color: C.white,
+            borderRadius: 100, textDecoration: 'none',
+            fontSize: 14, fontWeight: 600, letterSpacing: 0.2,
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={e=>{ e.currentTarget.style.background=C.olive; e.currentTarget.style.transform='translateY(-1px)'; }}
+          onMouseLeave={e=>{ e.currentTarget.style.background=C.forest; e.currentTarget.style.transform='translateY(0)'; }}>
+            {ctaLabel}
+            <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+          </a>
+          {secondary && (
+            <a href={secondary.href} download={secondary.download} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '10px 20px', background: 'transparent', color: C.forest,
+              border: `2px solid ${C.forest}`, borderRadius: 100, textDecoration: 'none',
+              fontSize: 14, fontWeight: 600, letterSpacing: 0.2,
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e=>{ e.currentTarget.style.background=C.sagePale; e.currentTarget.style.transform='translateY(-1px)'; }}
+            onMouseLeave={e=>{ e.currentTarget.style.background='transparent'; e.currentTarget.style.transform='translateY(0)'; }}>
+              <span aria-hidden="true" style={{ fontSize: 15, lineHeight: 1 }}>↓</span>
+              {secondary.label}
+            </a>
+          )}
+        </div>
+        {secondary && secondary.note && (
+          <p style={{ fontSize: 12, color: C.muted, marginTop: 12 }}>{secondary.note}</p>
+        )}
+      </div>
+    </article>
+  );
+}
+
+// Decorative AAC tile preview — small grid of soft-coloured pads
+function AACTilePreview() {
+  const tiles = [
+    { bg: '#eef2ff', ink: '#3730a3', label: 'Piano', glyph: '🎹' },
+    { bg: '#fdf2f8', ink: '#831843', label: 'Play',  glyph: '▶' },
+    { bg: '#f0fdf4', ink: '#065f46', label: 'More',  glyph: '＋' },
+    { bg: '#fffbeb', ink: '#92400e', label: 'Break', glyph: '☕' },
+    { bg: '#faf5ff', ink: '#5b21b6', label: 'Happy', glyph: '☺' },
+    { bg: '#f0f9ff', ink: '#0c2d6b', label: 'Stop',  glyph: '⏹' },
+  ];
+  return (
+    <div aria-hidden="true" style={{
+      width: '100%', maxWidth: 280,
+      display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10,
+    }}>
+      {tiles.map((t, i) => (
+        <div key={i} style={{
+          aspectRatio: '1',
+          background: t.bg,
+          color: t.ink,
+          borderRadius: 14,
+          border: `2px solid ${t.ink}22`,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          gap: 4,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        }}>
+          <span style={{ fontSize: 28, lineHeight: 1 }}>{t.glyph}</span>
+          <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 0.3, textTransform: 'uppercase' }}>{t.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Guitar chord chart preview — page 1 of the PDF, opens the full chart
+const GUITAR_PDF = 'uploads/resources/treefrog-guitar-chords.pdf';
+
+function ChordSheetPreview() {
+  return (
+    <a href={GUITAR_PDF} target="_blank" rel="noopener" className="res-preview"
+      aria-label="Open the guitar chord chart (PDF)"
+      style={{
+        display: 'block', width: '100%', maxWidth: 230,
+        borderRadius: 8, overflow: 'hidden', background: '#fff',
+        boxShadow: '0 8px 24px rgba(45,74,30,0.16)',
+        border: '1px solid rgba(45,74,30,0.12)',
+      }}>
+      <img src="uploads/resources/guitar-chords-preview.webp"
+        alt="Preview of page 1 of the open guitar chord chart, showing chord diagrams for C, D, E, G, A, Am, Dm, Em and four dominant 7th chords"
+        width="560" height="792" loading="lazy" decoding="async"
+        style={{ display: 'block', width: '100%', height: 'auto' }}/>
+    </a>
+  );
+}
+
+function Resources() {
+  return (
+    <>
+      <PolicyNav />
+
+      <main id="main" className="doc-pad" style={{ padding: '140px 40px 80px' }}>
+        <div style={{ maxWidth: 920, margin: '0 auto' }}>
+          {/* Heading */}
+          <div style={{ marginBottom: 56, textAlign: 'center' }}>
+            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: 3, textTransform: 'uppercase', color: C.oliveInk, marginBottom: 12 }}>Free tools & downloads</p>
+            <h1 className="doc-title" style={{
+              fontFamily: 'Playfair Display, serif',
+              fontSize: 52, color: C.forest, fontWeight: 600,
+              lineHeight: 1.15, marginBottom: 18,
+            }}>Resources</h1>
+            <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.7, maxWidth: 580, margin: '0 auto' }}>
+              A small library of practical tools to support music therapy sessions, music lessons, and the people we work with — free to use, designed for accessibility.
+            </p>
+          </div>
+
+          {/* Cards */}
+          <ResourceCard
+            tag="Communication Tool"
+            title="Music Therapy AAC"
+            blurb="A free, browser-based augmentative and alternative communication board built for music therapy sessions and music lessons. Tap symbol tiles to build a sentence, then press Speak — the device reads it aloud."
+            bullets={[
+              'Curated vocabulary for instruments, songs, emotions, needs and preferences',
+              'Add your own words and create custom sections on the fly',
+              'Small, medium and large tile profiles for different motor and visual needs',
+              'Works offline once loaded — no sign-in, no tracking',
+            ]}
+            href="Music Therapy AAC.html"
+            ctaLabel="Open the AAC tool"
+            media={<AACTilePreview />}
+          />
+
+          <ResourceCard
+            tag="Printable · Guitar"
+            title="Open Guitar Chord Chart"
+            blurb="A clear, printable reference of 24 open chords for guitar — handy for lessons, practice at home, or keeping on the music stand. Each chord shows where to put your fingers, which strings ring open and which to leave out."
+            bullets={[
+              'Major and minor chords, plus dominant, minor and major 7ths',
+              'Add9 and suspended chords (sus2 and sus4) for extra colour',
+              'Numbered finger dots: 1 index, 2 middle, 3 ring, 4 pinky',
+              'Two A4 pages — print it, laminate it, or keep it on a tablet',
+            ]}
+            href={GUITAR_PDF}
+            ctaLabel="View the chord chart"
+            secondary={{
+              href: GUITAR_PDF,
+              download: 'Treefrog Music Therapy - Open Guitar Chords.pdf',
+              label: 'Download PDF',
+              note: 'PDF, 2 pages, 190 KB',
+            }}
+            media={<ChordSheetPreview />}
+          />
+
+          {/* Coming soon / footer note */}
+          <div style={{
+            background: C.cream, borderRadius: 16,
+            border: `1px dashed ${C.creamDark}`,
+            padding: '28px 32px', textAlign: 'center', marginTop: 8,
+          }}>
+            <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: C.oliveInk, marginBottom: 8 }}>More on the way</p>
+            <p style={{ fontSize: 15, color: C.warm, lineHeight: 1.7, maxWidth: 560, margin: '0 auto' }}>
+              Visual schedules, song books and family handouts are in development. If there's something you'd love to see here, <a href="index.html#contact" style={{ color: C.oliveInk, textDecoration: 'underline', fontWeight: 600 }}>get in touch</a>.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <PolicyFooter />
+      <AccessibilityMenu />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Resources />);
+</script>
+</body>
+</html>

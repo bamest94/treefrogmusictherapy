@@ -9,6 +9,7 @@ const C = {
   creamDark: '#e8e3d5',
   forest: '#2d4a1e',
   olive: '#5c7a35',
+  oliveInk: '#4f6a2d', // olive, a touch deeper — for small text so it passes WCAG AA on cream
   sage: '#8aad5a',
   sagePale: '#dcebd0',
   warm: '#2a2a22',
@@ -59,11 +60,23 @@ function PolicyNav() {
   const isMobile = useIsMobile();
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+  // Skip link: jump keyboard focus straight to the page's <main>
+  const skipToMain = (e) => {
+    const m = document.querySelector('main');
+    if (!m) return;
+    e.preventDefault();
+    if (!m.hasAttribute('tabindex')) m.setAttribute('tabindex', '-1');
+    m.focus();
+    m.scrollIntoView();
+  };
   return (
-    <nav style={{
+    <>
+    <a href="#main" className="skip-link" onClick={skipToMain}>Skip to main content</a>
+    <nav aria-label="Main" className={scrolled ? 'tf-nav-scrolled' : undefined} style={{
       position:'fixed', top:0, left:0, right:0, zIndex:100,
       padding: scrolled ? `12px ${isMobile ? '20px' : '40px'}` : `20px ${isMobile ? '20px' : '40px'}`,
       background: scrolled ? 'rgba(243,239,229,0.97)' : 'transparent',
@@ -72,9 +85,9 @@ function PolicyNav() {
       transition:'all 0.3s ease',
       display:'flex', alignItems:'center', justifyContent:'space-between',
     }}>
-      <a href="index.html" style={{ display:'flex', alignItems:'center', gap:14, textDecoration:'none' }}>
-        <img src="uploads/Treefrog Logo.png" alt="Treefrog frog" style={{ height:46, width:'auto' }} />
-        <img src="uploads/Treefrog Text.png" alt="Treefrog Music Therapy" style={{ height:44, width:'auto', display: isMobile ? 'none' : 'block' }} />
+      <a href="index.html" aria-label="Treefrog Music Therapy — home" style={{ display:'flex', alignItems:'center', gap:14, textDecoration:'none' }}>
+        <img src="uploads/optimised/Treefrog Logo.webp" alt="" width="46" height="46" style={{ height:46, width:'auto' }} />
+        <img src="uploads/optimised/Treefrog Text.webp" alt="" style={{ height:44, width:'auto', display: isMobile ? 'none' : 'block' }} />
       </a>
       <a href="index.html" style={{
         padding:'9px 20px', background:'transparent', color:C.forest,
@@ -84,30 +97,32 @@ function PolicyNav() {
       }}
       onMouseEnter={e=>{ e.currentTarget.style.background=C.forest; e.currentTarget.style.color=C.white; }}
       onMouseLeave={e=>{ e.currentTarget.style.background='transparent'; e.currentTarget.style.color=C.forest; }}>
-        ← Back to Home
+        <span aria-hidden="true">← </span>Back to Home
       </a>
     </nav>
+    </>
   );
 }
 
 // ── Footer ────────────────────────────────────────────────────
 function PolicyFooter() {
   return (
-    <footer style={{ background:'#1e3213', color:C.white, padding:'56px 40px 36px' }}>
+    <footer className="footer-pad" style={{ background:'#1e3213', color:C.white, padding:'56px 40px 36px' }}>
       <div style={{ maxWidth:960, margin:'0 auto' }}>
         <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:18 }}>
-          <img src="uploads/Treefrog Logo.png" alt="Treefrog frog" style={{ height:56, width:'auto' }} />
-          <img src="uploads/Treefrog Text.png" alt="Treefrog Music Therapy" style={{ height:42, width:'auto', filter:'brightness(10)' }} />
+          <img src="uploads/optimised/Treefrog Logo.webp" alt="Treefrog frog" loading="lazy" decoding="async" style={{ height:56, width:'auto' }} />
+          <img src="uploads/optimised/Treefrog Text.webp" alt="Treefrog Music Therapy" loading="lazy" decoding="async" style={{ height:42, width:'auto', filter:'brightness(10)' }} />
         </div>
-        <p style={{ fontSize:13, opacity:0.55, marginBottom:24 }}>ABN 68 153 383 890 &nbsp;·&nbsp; AMTA Registered Music Therapist</p>
+        <p style={{ fontSize:13, opacity:0.75, marginBottom:24 }}>ABN 68 153 383 890 &nbsp;·&nbsp; AMTA Registered Music Therapist</p>
         <div style={{ display:'flex', gap:8, marginBottom:32 }}>
           {[
-            ['FB','https://www.facebook.com/profile.php?id=61574307872221'],
-            ['IG','https://www.instagram.com/treefrogmusictherapy'],
-            ['LI','http://linkedin.com/in/brada-t'],
-            ['TT','https://www.tiktok.com/@treefrogmusictherapy'],
-          ].map(([l, h]) => (
-            <a key={l} href={h} style={{
+            ['FB','https://www.facebook.com/profile.php?id=61574307872221','Facebook'],
+            ['IG','https://www.instagram.com/treefrogmusictherapy','Instagram'],
+            ['LI','https://www.linkedin.com/in/brada-t','LinkedIn'],
+            ['TT','https://www.tiktok.com/@treefrogmusictherapy','TikTok'],
+          ].map(([l, h, name]) => (
+            <a key={l} href={h} target="_blank" rel="noopener noreferrer"
+              aria-label={'Treefrog Music Therapy on ' + name} style={{
               width:36, height:36, borderRadius:8, border:'1px solid rgba(255,255,255,0.15)',
               display:'flex', alignItems:'center', justifyContent:'center',
               textDecoration:'none', opacity:0.7, transition:'all 0.15s',
@@ -119,14 +134,14 @@ function PolicyFooter() {
           ))}
         </div>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12, paddingTop:24, borderTop:'1px solid rgba(255,255,255,0.1)' }}>
-          <p style={{ fontSize:13, opacity:0.4 }}>© 2025 Bradley Ames-Thomson & Treefrog Music Therapy</p>
+          <p style={{ fontSize:13, opacity:0.7 }}>© {new Date().getFullYear()} Bradley Ames-Thomson & Treefrog Music Therapy</p>
           <div style={{ display:'flex', gap:20 }}>
-            <a href="Privacy Policy.html" style={{ fontSize:13, opacity:0.4, color:C.white, textDecoration:'none' }}
-              onMouseEnter={e=>e.currentTarget.style.opacity='0.85'} onMouseLeave={e=>e.currentTarget.style.opacity='0.4'}>
+            <a href="Privacy Policy.html" style={{ fontSize:13, opacity:0.75, color:C.white, textDecoration:'underline' }}
+              onMouseEnter={e=>e.currentTarget.style.opacity='1'} onMouseLeave={e=>e.currentTarget.style.opacity='0.75'}>
               Privacy Policy
             </a>
-            <a href="Accessibility Statement.html" style={{ fontSize:13, opacity:0.4, color:C.white, textDecoration:'none' }}
-              onMouseEnter={e=>e.currentTarget.style.opacity='0.85'} onMouseLeave={e=>e.currentTarget.style.opacity='0.4'}>
+            <a href="Accessibility Statement.html" style={{ fontSize:13, opacity:0.75, color:C.white, textDecoration:'underline' }}
+              onMouseEnter={e=>e.currentTarget.style.opacity='1'} onMouseLeave={e=>e.currentTarget.style.opacity='0.75'}>
               Accessibility Statement
             </a>
           </div>
@@ -153,6 +168,7 @@ const DARK_COLOR_MAP = {
   'rgb(42, 42, 34)':    '#e8e3d5', // warm
   'rgb(107, 107, 96)':  '#a8a89c', // muted
   'rgb(92, 122, 53)':   '#9ec064', // olive
+  'rgb(79, 106, 45)':   '#9ec064', // oliveInk
   'rgb(107, 63, 160)':  '#b48cd6',
 };
 const DARK_BORDER_MAP = {
@@ -283,7 +299,29 @@ function AccessibilityMenu() {
         body { font-size: calc(16px * var(--tf-scale)); zoom: var(--tf-scale); }
         html[data-tf-theme="dark"] body { background: #15140f !important; color: #e8e3d5 !important; }
         html[data-tf-theme="dark"] body::before { opacity: 0.18 !important; filter: invert(1); }
-        html[data-tf-theme="dark"] nav[style*="rgba(243,239,229"] { background: rgba(28,27,21,0.97) !important; border-bottom-color: #2c2a20 !important; }
+        /* (browsers rewrite inline rgba() with spaces, so target the scrolled nav by class) */
+        html[data-tf-theme="dark"] nav.tf-nav-scrolled { background: rgba(28,27,21,0.97) !important; border-bottom-color: #2c2a20 !important; }
+
+        /* Keyboard & motion helpers */
+        .skip-link {
+          position: fixed; left: 16px; top: -80px; z-index: 10000;
+          padding: 10px 20px; background: #2d4a1e; color: #faf8f3;
+          border-radius: 100px; font-size: 14px; font-weight: 600; text-decoration: none;
+          transition: top 0.15s ease;
+        }
+        .skip-link:focus { top: 12px; }
+        main:focus { outline: none; }
+        :focus-visible { outline: 3px solid #2d4a1e; outline-offset: 2px; box-shadow: 0 0 0 6px rgba(250,248,243,0.9); }
+        html[data-tf-theme="dark"] :focus-visible { outline-color: #b8d68a; box-shadow: 0 0 0 6px rgba(21,20,15,0.9); }
+        #root { overflow-x: clip; }
+        @media (max-width: 768px) {
+          .footer-pad { padding: 48px 20px 32px !important; }
+          .doc-title { font-size: 38px !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          html { scroll-behavior: auto !important; }
+          *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+        }
         html[data-tf-theme="dark"] img[src*="Treefrog%20Text"],
         html[data-tf-theme="dark"] img[src*="Treefrog Text"] { filter: brightness(0) invert(0.92); }
       `}</style>
